@@ -1,0 +1,23 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    & label {
+        color: var(--text-base);
+    }
+
+    & input {
+        padding: 8px;
+        margin-top: 0.3rem;
+    }
+
+    & > .form__group {
+        margin-bottom: 1rem;
+        & > .form__auth-description {
+            margin-bottom: 1rem;
+        }
+    }
+
+    & > .form__alert-wrapper {
+        margin-bottom: 1rem;
+    }
+}

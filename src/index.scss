@@ -1,0 +1,99 @@
+@use "./variables.scss";
+@use "./reset.scss";
+@use "./mixins.scss" as *;
+@include typos-highlight;
+
+:root {
+    // Здесь будут использоваться обычные css переменные, чтобы c помощью prefers-color-scheme менять цветовую тему
+    --dark-gray: #545454;
+    --text-muted: #b0b0b0;
+    --text-highlight: #f1f1f1;
+    --text-base: #e7e7e7;
+
+    --bg-main: #1a1a1a;
+    --bg-accent: #2c2c2c;
+    --color-secondary: #151515;
+}
+
+html,
+body {
+    height: 100vh;
+    width: 100%;
+    font-size: 12px;
+    font-family: "Noto Sans", serif; // Добавить @font-face
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-highlight);
+    font-weight: inherit;
+}
+
+h1,
+h2,
+h3 {
+    line-height: $line-height-xl;
+}
+
+sp-button {
+    padding: 0;
+    min-height: 35px;
+    border-radius: $border-radius-s;
+    font-weight: 600;
+    font-family: serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    & > sp-icon {
+        vertical-align: bottom;
+        padding-right: 5px;
+    }
+}
+
+input {
+    color: var(--text-muted);
+    background-color: var(--bg-main);
+}
+
+input,
+label {
+    width: 100%;
+    margin: 0;
+}
+
+#app {
+    height: 100%;
+    background-color: var(--bg-main);
+}
+
+strong {
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+.muted {
+    color: var(--text-muted);
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+    :root {
+        --text-muted: #676767;
+        --text-highlight: #1f1f1f;
+        --text-base: #404040;
+
+        --bg-main: #f3f4f6b0;
+        --bg-accent: #ffffff;
+        --color-secondary: #fbfbfb;
+    }
+}

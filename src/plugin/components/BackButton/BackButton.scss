@@ -1,0 +1,14 @@
+.return-custom-btn {
+    padding: 0.4rem;
+    border-radius: $border-radius-s;
+    margin-right: 1rem;
+    cursor: pointer;
+    &:hover {
+        background-color: $on-secondary-buttons-hover;
+        border-radius: $border-radius-s;
+    }
+}
+
+.back-btn-icon {
+    fill: var(--text-highlight);
+}

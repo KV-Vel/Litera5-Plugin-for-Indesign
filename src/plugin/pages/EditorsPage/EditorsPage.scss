@@ -1,0 +1,12 @@
+.editors-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    & .editors-page__alert-wrapper {
+        margin: 0.5rem auto;
+        width: 85%;
+        overflow: auto;
+        flex-grow: 1;
+    }
+}

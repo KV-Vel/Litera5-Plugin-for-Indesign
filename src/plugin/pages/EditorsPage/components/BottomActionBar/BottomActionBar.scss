@@ -1,0 +1,11 @@
+.bottom-action-bar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0.8rem 1.5rem 0 0.8rem;
+    border-top: 2px solid var(--dark-gray);
+    & > * {
+        margin-bottom: 0.5rem;
+    }
+}

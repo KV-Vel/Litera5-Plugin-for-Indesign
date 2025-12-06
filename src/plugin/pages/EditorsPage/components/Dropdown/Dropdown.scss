@@ -1,0 +1,17 @@
+.dropdown {
+    position: relative;
+    & > .dropdown__toggler {
+        color: var(--text-highlight);
+        padding: 0.5rem;
+        background-color: var(--bg-accent);
+        border-radius: $border-radius-s;
+        width: 220px;
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid var(--dark-gray);
+        .span {
+            font-family: serif;
+            font-weight: 500;
+        }
+    }
+}

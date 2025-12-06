@@ -1,0 +1,17 @@
+.statistic-badge {
+    text-align: center;
+    font-family: serif;
+    font-size: $text-size-xs;
+    padding: 6px;
+    border-radius: $border-radius-s;
+
+    &--medium {
+        min-width: 30px;
+        min-height: 25px;
+    }
+
+    &--small {
+        min-width: 20px;
+        min-height: 20px;
+    }
+}

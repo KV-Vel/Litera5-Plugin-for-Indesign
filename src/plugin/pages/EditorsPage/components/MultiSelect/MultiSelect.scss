@@ -1,0 +1,38 @@
+.multiselect {
+    background-color: var(--bg-accent);
+    padding: 0.8rem;
+    border-radius: $border-radius-s;
+    border: 1px solid var(--dark-gray);
+
+    &.multiselect--positioned-absolutely {
+        position: absolute;
+        top: 2.5rem;
+        z-index: 1;
+        width: 100%;
+    }
+}
+
+.checkbox-wrapper {
+    border-radius: $border-radius-s;
+    padding: 0 0 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+
+    &.checkbox-wrapper--gap-between > *:not(:last-child) {
+        margin-right: 10px;
+    }
+
+    sp-checkbox {
+        border-radius: $border-radius-s;
+        padding: 0px 8px 7px 7px;
+        cursor: pointer;
+        width: 100%;
+        border: 0.5px solid transparent;
+        &:hover {
+            background-color: rgb(70 70 70 / 32%);
+            border: 0.5px solid #99999947;
+        }
+    }
+}

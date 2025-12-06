@@ -1,0 +1,108 @@
+.container-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.settings-btn {
+    padding: 0.4rem;
+    border-radius: $border-radius-s;
+    cursor: pointer;
+    &:hover {
+        background-color: $on-secondary-buttons-hover;
+    }
+
+    &__icon {
+        height: auto;
+        width: 20px;
+    }
+}
+
+.authpage__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    & > svg {
+        max-width: 93px;
+    }
+}
+
+.authpage__form-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 1.5rem;
+    border-radius: $border-radius-m;
+
+    & > .authpage__inner-form-wrapper > .authpage__description {
+        .alert-wrapper {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        ol {
+            margin: 1rem 0;
+            & > li {
+                display: flex;
+                color: var(--text-muted);
+                background-color: var(--color-secondary);
+                padding: 20px;
+                border-radius: $border-radius-m;
+                margin-bottom: 5px;
+                border: 1px solid transparent;
+                &:hover > span {
+                    background-color: #49011f9e;
+                    color: #ff5781eb;
+                    border: 1px solid #ff5781eb;
+                }
+
+                &:hover {
+                    border: 1px solid #c738625e;
+                    background: radial-gradient(circle at center, #de18581a, transparent);
+                }
+
+                & > span {
+                    background-color: #49011f45;
+                    height: max-content;
+                    padding: 10px 15px;
+                    border-radius: $border-radius-s;
+                    color: #ff578182;
+                    margin-right: 15px;
+                    border: 1px solid #ff578182;
+                }
+                & > article {
+                    line-height: 1.8;
+                }
+
+                @media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+                    &:hover {
+                        color: #3d3d3d;
+                    }
+
+                    & > span {
+                        background-color: rgb(234 66 136 / 19%);
+                        color: rgb(251 42 94 / 69%);
+                        border: 1px solid rgb(251 42 94 / 69%);
+                    }
+
+                    &:hover {
+                        border: 1px solid rgba(199, 56, 99, 0.801);
+                        background: radial-gradient(
+                            circle at center,
+                            rgb(255 0 82 / 22%),
+                            transparent
+                        );
+                    }
+                }
+            }
+        }
+    }
+}

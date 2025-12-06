@@ -1,0 +1,21 @@
+.available-kinds-list {
+    margin-top: 20px;
+    & .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 5px 0;
+        padding: 0.5rem;
+        border-radius: $border-radius-s;
+        background-color: rgb(0 0 0 / 6%);
+    }
+}
+
+.annotations-list {
+    overflow: auto;
+    flex-grow: 1;
+    margin: 10px 0;
+    .annotation {
+        margin: 0 0.8rem 0.8rem 0.8rem;
+    }
+}

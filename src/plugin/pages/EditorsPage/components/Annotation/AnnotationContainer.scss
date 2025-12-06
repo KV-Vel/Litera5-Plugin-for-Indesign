@@ -1,0 +1,61 @@
+.annotation {
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    border-radius: $border-radius-s;
+    padding: 1rem 1rem 1rem 1.2rem;
+    color: var(--text-muted);
+    font-family: Rubik, serif;
+    background-color: var(--bg-accent);
+    border: 0.5px solid transparent;
+    position: relative;
+    &:hover {
+        border: 0.5px solid $action-highlight;
+    }
+    & > .statistic-badge {
+        position: absolute;
+        /* 12.5 - половина высоты statistic-badge при size medium */
+        top: calc(50% - 12.5px);
+        left: -20px;
+    }
+}
+
+/* Тэг <i> не работает в UXP */
+i {
+    font-style: italic;
+}
+
+.annotation__suggestion,
+.annotation__explanation {
+    margin-top: 10px;
+    & > a[data-word] {
+        display: inline-block;
+        vertical-align: bottom;
+        text-align: center;
+        padding: 0 3px;
+        background-color: #fff;
+        margin: 1px 0;
+        border-radius: 3px;
+        color: black;
+        white-space: nowrap;
+    }
+
+    /* Пока не знаю, есть ли возможность добавлять слово в словарь */
+    & > a[data-kind="add-word"] {
+        display: none;
+    }
+}
+
+u {
+    color: red;
+    display: inline;
+}
+
+.delete-btn {
+    &:hover {
+        background-color: $on-secondary-buttons-hover;
+    }
+    padding: 2.5px;
+    border-radius: 2px;
+    cursor: pointer;
+}

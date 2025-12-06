@@ -1,0 +1,29 @@
+// ВЫнести в отдельный файл переменных?
+$typo-mkEveryTypo: #a5a5a5;
+$typo-mkSpelling: #9fc5e8;
+$typo-mkGrammar: #ea9999;
+$typo-mkPunctuation: #b6d7a8;
+$typo-mkStyle: #f9cb9c;
+$typo-mkSemantic: #6d9eeb;
+$typo-mkTypography: #a2c4c9;
+$typo-mkYo: #d5a6bd;
+$typo-mkPaperStructure: #8e7cc3;
+
+@mixin typo-style($typo, $bg) {
+    .#{$typo} {
+        background-color: $bg !important;
+        color: rgb(61, 61, 61) !important;
+    }
+}
+
+@mixin typos-highlight {
+    @include typo-style("everyTypo", $typo-mkEveryTypo);
+    @include typo-style("mkSpelling", $typo-mkSpelling);
+    @include typo-style("mkGrammar", $typo-mkGrammar);
+    @include typo-style("mkPunctuation", $typo-mkPunctuation);
+    @include typo-style("mkStyle", $typo-mkStyle);
+    @include typo-style("mkSemantic", $typo-mkSemantic);
+    @include typo-style("mkTypography", $typo-mkTypography);
+    @include typo-style("mkYo", $typo-mkYo);
+    @include typo-style("mkPaperStructure", $typo-mkPaperStructure);
+}

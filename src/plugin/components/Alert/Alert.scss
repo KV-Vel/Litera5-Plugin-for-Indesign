@@ -1,0 +1,134 @@
+@mixin alert($type, $alert-color, $alert-border, $alert-bg, $icon-bg, $icon-color, $header-color) {
+    &.#{$type} {
+        color: $alert-color;
+        border: 1px solid $alert-border;
+        background-color: $alert-bg;
+
+        .alert__inner > .alert__icon-wrapper {
+            background: linear-gradient(180deg, $icon-bg, transparent);
+
+            .alert__icon {
+                color: $icon-color;
+            }
+        }
+
+        strong {
+            color: $header-color;
+        }
+    }
+}
+
+.alert {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: $border-radius-s;
+    font-family: serif;
+
+    @media (prefers-color-scheme: dark), (prefers-color-scheme: darkest) {
+        @include alert(
+            "checkmark",
+            #2a9e78,
+            rgb(89 255 217 / 22%),
+            rgb(0 253 172 / 4%),
+            rgb(21 154 93 / 35%),
+            #00fd91,
+            #59ffbad9
+        );
+
+        @include alert(
+            "info",
+            #2a899e,
+            rgba(89, 209, 255, 0.22),
+            rgb(0 148 253 / 4%),
+            rgb(21 136 154 / 35%),
+            #00fdfd,
+            #59fff7d9
+        );
+
+        @include alert(
+            "help",
+            #9e752a,
+            rgb(255 181 89 / 22%),
+            rgb(253 152 0 / 4%),
+            rgb(154 125 21 / 35%),
+            #ffb100,
+            #ffbd59d9
+        );
+
+        @include alert(
+            "alert",
+            #9e2a47,
+            rgba(255, 89, 130, 0.22),
+            rgba(253, 8, 0, 0.04),
+            rgba(154, 21, 50, 0.35),
+            #ff004c,
+            #ff596fd9
+        );
+    }
+
+    @media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
+        @include alert(
+            "checkmark",
+            rgba(0, 171, 92, 0.812),
+            rgba(0, 128, 50, 0.22),
+            rgba(0, 253, 63, 0.04),
+            rgba(13, 156, 97, 0.35),
+            #0d9c61,
+            #0d9c61
+        );
+
+        @include alert(
+            "info",
+            rgba(0, 124, 212, 0.812),
+            rgba(0, 161, 255, 0.22),
+            rgba(0, 148, 253, 0.04),
+            rgba(0, 148, 253, 0.35),
+            rgb(49 143 210),
+            rgb(49 143 210)
+        );
+
+        @include alert(
+            "help",
+            rgba(138, 109, 59, 0.812),
+            rgba(165, 137, 42, 0.22),
+            rgba(253, 173, 0, 0.04),
+            rgba(183, 167, 89, 0.35),
+            #887100,
+            #887100
+        );
+
+        @include alert(
+            "alert",
+            rgba(212, 42, 0, 0.812),
+            rgba(255, 51, 0, 0.22),
+            rgba(253, 30, 0, 0.04),
+            rgba(253, 30, 0, 0.35),
+            rgb(210, 54, 49),
+            rgb(210, 54, 49)
+        );
+    }
+}
+
+.alert__inner {
+    display: flex;
+
+    & > .alert__icon-wrapper {
+        border-radius: 10.5px;
+        padding: 5px;
+
+        .alert__icon {
+            align-self: flex-start;
+            margin-right: 0.5px;
+        }
+    }
+
+    & > .alert__text-wrapper {
+        padding-left: 10px;
+        flex-grow: 1;
+
+        p {
+            margin-top: 5px;
+        }
+    }
+}

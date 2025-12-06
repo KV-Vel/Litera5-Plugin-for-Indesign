@@ -1,0 +1,25 @@
+.settings-page {
+    overflow: auto;
+    .toolbar {
+        & > h2 {
+            color: var(--text-base);
+        }
+    }
+}
+
+.exceptions {
+    padding: 1.5rem;
+    border-radius: $border-radius-m;
+    & > p {
+        color: var(--text-muted);
+    }
+
+    & > .alert-wrapper {
+        margin: 1rem 0;
+    }
+
+    & > .exceptions__list {
+        display: flex;
+        justify-content: space-between;
+    }
+}
