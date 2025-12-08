@@ -45,7 +45,7 @@ function createCharacterStyleGroup(props: object): CharacterStyleGroup {
 
 /**
  * @description создает стиль символов для каждого типа ошибки OrthoKind
- * @param group группа символов, где будут находиться стили
+ * @param group группа, где будут находиться стили
  * @param textSize размер текста исходя из которого будет создаваться высота линии выделения текста
  */
 function createCharacterStylesForEachOrthoKind(group: CharacterStyleGroup, textSize: number) {

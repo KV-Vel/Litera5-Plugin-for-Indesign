@@ -30,7 +30,9 @@ const manifest: UXP_Manifest = {
             preferredDockedSize: { width: 400, height: 280 },
             preferredFloatingSize: { width: 480, height: 800 },
             /**
-             * B
+             * К плагину можно прикрутить свои иконки, но иконка будет отображаться только в меню плагинов.
+             * На боковой панели в InDesign она отображаться не будет, это давняя проблема
+             * @see https://forums.creativeclouddeveloper.com/t/missing-uxp-plugin-panel-icons/7105/13
              */
             icons: [
                 {

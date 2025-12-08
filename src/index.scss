@@ -3,6 +3,8 @@
 @use "./mixins.scss" as *;
 @include typos-highlight;
 
+/* В плагине хоть и есть css, но нет поддержки grid, gap, margin-block и т.п. */
+
 :root {
     // Здесь будут использоваться обычные css переменные, чтобы c помощью prefers-color-scheme менять цветовую тему
     --dark-gray: #545454;

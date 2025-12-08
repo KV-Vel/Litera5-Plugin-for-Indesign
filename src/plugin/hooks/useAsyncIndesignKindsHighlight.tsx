@@ -21,6 +21,13 @@ export default function useAsyncIndesignKindsHighlight() {
         txt: null,
     });
 
+    /**
+     * Здесь useEffect + setTimeout, потому что, без этого в Indesign появляется странное поведение (или я чего-то не знаю про React):
+     * если проверенный текст находится на нескольких страницах, то при снятии выбора с типа аннотации, выделение на тексте может не сохраняться, пока
+     * пользователь не поставит курсор в текст фрейма
+     */
+
+    // toggle одного типа аннотаций в InDesign
     useEffect(() => {
         const timerId = setTimeout(() => {
             app.select(indesignKindState.txt!);
@@ -56,6 +63,7 @@ export default function useAsyncIndesignKindsHighlight() {
         return () => clearTimeout(timerId);
     }, [indesignKindState]);
 
+    // toggle всех аннотаций в InDesign
     useEffect(() => {
         const timerId = setTimeout(() => {
             app.select(everyIndesignKindsState.txt!);

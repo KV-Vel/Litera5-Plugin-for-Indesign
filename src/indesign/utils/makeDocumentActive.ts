@@ -7,4 +7,8 @@ export default function makeDocumentActive(document: Document): boolean {
         return true;
     }
     return false;
+    /**
+     * Попробовать проще
+     * return app.activeDocument.name === document.name
+     */
 }

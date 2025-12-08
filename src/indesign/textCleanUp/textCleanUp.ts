@@ -46,7 +46,7 @@ export default function textCleanUp(
     findAndChangeGrep(text, GREP_SYMBOLS.ANY_IDENT, "");
 
     /**
-     * Возвращаем не contents из аргумента text, а заново selection, потому что после очистки текста от непечатаемых символов
+     * Возвращаем не contents(текст) из аргумента text, а заново selection, потому что после очистки текста от непечатаемых символов
      * объект может стать !isValid и не даст вернуть text.contents
      */
     const currentSelection = (app.selection as TextVariations[] | TextFrame[])[0];

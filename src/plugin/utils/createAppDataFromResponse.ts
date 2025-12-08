@@ -22,7 +22,7 @@ export default function createAppDataFromResponse(
     selection: TextVariations | TextFrame,
     exceptions: Record<OrthoKind, boolean>,
 ): AppData {
-    // На случай, если пользователь закроет документ, до начала выделения ошибок.
+    // На случай, если пользователь закроет документ до начала выделения ошибок.
     if (!app.documents.length) {
         throw new Error("Не удалось отметить ошибки, т.к не открыт ни один документ.");
     }
