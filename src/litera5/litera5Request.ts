@@ -1,8 +1,5 @@
-import { CheckOgxtResponse, CheckState } from "litera5-api-js-client";
-import { createApi, CheckProfile, CheckOgxtResultsResponse } from "litera5-api-js-client";
-import { config } from "./config";
-
-const apiLitera5 = createApi(config);
+import { CheckOgxtResponse, CheckState, Litera5Api } from "litera5-api-js-client";
+import { CheckProfile, CheckOgxtResultsResponse } from "litera5-api-js-client";
 
 const requestEndsWithFail = (requestState: CheckOgxtResultsResponse["state"]) => {
     const FAILED_STATES = [
@@ -21,13 +18,14 @@ const requestEndsWithFail = (requestState: CheckOgxtResultsResponse["state"]) =>
 async function initLitera5Check(
     login: string = "",
     text: string,
+    api: Litera5Api,
 ): Promise<CheckOgxtResponse["check"]> {
     /**
      *  Остальные 2 аргумента необязательные (согласно документации в репозитории Орфограммки) ??
      *  @see https://git.hitsoft-it.com/github/orfogrammatika/litera5-api-js-client/-/blob/master/src/api-model.ts?ref_type=heads
      */
     try {
-        const initiatedDocumentData = await apiLitera5.checkOgxt({
+        const initiatedDocumentData = await api.checkOgxt({
             login: login,
             profile: CheckProfile.ORTHO,
             html: `<p>${text}</p>`,
@@ -37,15 +35,8 @@ async function initLitera5Check(
         return initiatedDocumentData.check;
     } catch (error) {
         if (error instanceof Response) {
-            if (error.status === 404) {
-                throw new Error("Пользователь с таким логином не найден.");
-            }
-            void error.text().then((txt) => console.error(txt));
-            /**
-             * else if (error.status === 401 OR 403?) {
-             *  throw new Error("Неверно указан API ключ") ???
-             * }
-             */
+            const errorMessage = await error.text();
+            throw new Error(errorMessage || "Неудалось извлечь ошибку: неизвестная ошибка.");
         }
 
         throw new Error("Сбой во время запуска проверки. ");
@@ -60,8 +51,9 @@ let timeout: ReturnType<typeof setTimeout>;
 async function waitForCheckToComplete(
     id: CheckOgxtResponse["check"],
     readProgress: (result: CheckOgxtResultsResponse) => void,
+    api: Litera5Api,
 ): Promise<CheckOgxtResultsResponse> {
-    const result = await apiLitera5.checkOgxtResults({ check: id });
+    const result = await api.checkOgxtResults({ check: id });
     readProgress(result);
 
     return new Promise((resolve, reject) => {
@@ -74,7 +66,7 @@ async function waitForCheckToComplete(
                 return resolve(result);
             } else {
                 if (timeout) clearTimeout(timeout);
-                resolve(waitForCheckToComplete(id, readProgress));
+                resolve(waitForCheckToComplete(id, readProgress, api));
             }
         }, 2500);
     });
