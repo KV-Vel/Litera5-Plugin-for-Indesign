@@ -1,12 +1,12 @@
 import "./TopActionBar.scss";
 
 interface TopActionBarProps extends React.PropsWithChildren {
-    contentPlacement?: "--start" | "--centered";
+    contentPlacement?: "start" | "centered";
 }
 
 export default function TopActionBar({
     children,
-    contentPlacement = "--centered",
+    contentPlacement = "centered",
 }: TopActionBarProps) {
-    return <div className={`toolbar toolbar${contentPlacement}`}>{children}</div>;
+    return <div className={`toolbar toolbar--${contentPlacement}`}>{children}</div>;
 }
