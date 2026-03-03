@@ -1,14 +1,6 @@
 .form {
     display: flex;
     flex-direction: column;
-    & label {
-        color: var(--text-base);
-    }
-
-    & input {
-        padding: 8px;
-        margin-top: 0.3rem;
-    }
 
     & > .form__group {
         margin-bottom: 1rem;

@@ -1,26 +1,18 @@
 import "./RequestCheckTextForm.scss";
-import Alert from "../../../../components/Alert/Alert";
 import { AlertVariant } from "../../../../components/Alert/types";
 import { FormProps } from "../../types";
 import useTextCheck from "../../../../hooks/useTextCheck";
-import capitalize from "../../../../utils/capitalize";
-import Loader from "../../../../components/Loader/Loader";
-import { indesignUtils } from "../../../../../indesign/utils";
-import { OrthoKind } from "litera5-api-js-client";
-import { EXCEPTIONS_NAME, EXCEPTIONS_DEFAULT_STATE } from "../../../../constants/exceptionsDefault";
+import { capitalize } from "../../../../utils/capitalize";
+import { getSelection } from "../../../../../indesign/utils";
+import { getUserSettings } from "../../../../utils";
+import { Alert, Loader } from "../../../../components/index";
 
 export default function RequestCheckForm({ login, onLoginChange, onRequest }: FormProps) {
     const [isLoading, checkState, errorState, clearError, handleTextCheck] = useTextCheck();
 
-    function handleRequest(
-        litera5Login: string,
-        selection: ReturnType<<T extends { constructorName: string }>() => T> | undefined,
-    ) {
-        const exceptions = localStorage.getItem(EXCEPTIONS_NAME);
-        const parsedExceptions: Record<OrthoKind, boolean> = exceptions
-            ? JSON.parse(exceptions)
-            : EXCEPTIONS_DEFAULT_STATE;
-        onRequest(() => handleTextCheck(litera5Login, selection, parsedExceptions));
+    function handleRequest(litera5Login: string, selection: ReturnType<typeof getSelection>) {
+        const userSettings = getUserSettings();
+        onRequest(() => handleTextCheck(litera5Login, selection, userSettings));
     }
 
     function handleLoginChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -36,11 +28,11 @@ export default function RequestCheckForm({ login, onLoginChange, onRequest }: Fo
                     <input placeholder="ivanov.av" value={login} onChange={handleLoginChange} />
                 </label>
             </div>
-            {errorState.hasError && (
+            {errorState && (
                 <div className="form__alert-wrapper">
                     <Alert
                         header="Ошибка"
-                        description={errorState.message}
+                        description={errorState}
                         type={AlertVariant.WARNING}
                         onClose={clearError}
                     />
@@ -54,7 +46,7 @@ export default function RequestCheckForm({ login, onLoginChange, onRequest }: Fo
             )}
             <sp-button
                 disabled={isLoading}
-                onClick={() => handleRequest(login.trim(), indesignUtils.getSelection())}
+                onClick={() => handleRequest(login.trim(), getSelection())}
             >
                 <sp-icon name="ui:Magnifier"></sp-icon>
                 Проверить текст
