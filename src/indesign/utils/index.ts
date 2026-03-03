@@ -1,11 +1,7 @@
-import getSelection from "./getSelection";
-import getTextFromCharsPositions from "./selectTextFromCharacterPositions";
-import resetCharacterStyles from "./resetCharacterStyles";
-import makeDocumentActive from "./makeDocumentActive";
-
-export const indesignUtils = {
-    getSelection,
-    getTextFromCharsPositions,
-    resetCharacterStyles,
-    makeDocumentActive,
-};
+export * from "./getDefaultParagraphStyleFontSize";
+export * from "./getSelection";
+export * from "./hasDuplicateDocuments";
+export * from "./makeDocumentActive";
+export * from "./resetCharacterStyles";
+export * from "./getTextFromCharsPositions";
+export * from "./textCleanUp";
