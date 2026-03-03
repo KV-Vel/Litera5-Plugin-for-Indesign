@@ -66,6 +66,21 @@ label {
     margin: 0;
 }
 
+label {
+    color: var(--text-base);
+}
+
+input {
+    padding: 8px;
+    margin-top: 0.3rem;
+}
+
+/* Не работает */
+// input[type="text"] {
+//     padding: 8px;
+//     margin-top: 0.3rem;
+// }
+
 #app {
     height: 100%;
     background-color: var(--bg-main);
