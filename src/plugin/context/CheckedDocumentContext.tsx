@@ -16,9 +16,9 @@ export default function CheckedDocumentContextProvider({
     children: React.ReactNode;
 }) {
     const [checkedDocumentData, setCheckedDocumentData] = useState<CheckedDocumentData>({
-        checkedDocumentName: "",
-        checkId: "",
-        checkedText: null,
+        name: "",
+        id: "",
+        text: null,
     });
 
     return (
