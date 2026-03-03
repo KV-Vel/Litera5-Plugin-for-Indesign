@@ -3,9 +3,10 @@ import { Alert, StatisticBadge } from "../../components";
 import { AlertVariant } from "../../components/Alert/types";
 import "./SettingsPage.scss";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { EXCEPTIONS_DEFAULT_STATE, EXCEPTIONS_NAME } from "../../constants/exceptionsDefault";
 import TopActionBar from "../EditorsPage/components/TopActionBar/TopActionBar";
 import { BackButton } from "../../components";
+import { DEFAULT_USER_SETTINGS, LOCAL_STORAGE_KEYS, SECURE_STORAGE_KEYS } from "../../constants";
+import useSecureStorage from "../../hooks/useSecureStorage";
 
 interface SettingsPageProps {
     onReturn: () => void;
@@ -13,9 +14,19 @@ interface SettingsPageProps {
 
 export default function SettingsPage({ onReturn }: SettingsPageProps) {
     const [exceptions, setExceptions] = useLocalStorage<Record<OrthoKind, boolean>>(
-        EXCEPTIONS_NAME,
-        EXCEPTIONS_DEFAULT_STATE,
+        LOCAL_STORAGE_KEYS.EXCEPTIONS,
+        DEFAULT_USER_SETTINGS.EXCEPTIONS,
     );
+    const {
+        data: company,
+        handleChange: handleCompanyChange,
+        handleBlur: handleCompanyInputBlur,
+    } = useSecureStorage(SECURE_STORAGE_KEYS.COMPANY);
+    const {
+        data: secret,
+        handleChange: handleSecretChange,
+        handleBlur: handleSecretInputBlur,
+    } = useSecureStorage(SECURE_STORAGE_KEYS.SECRET);
 
     function handleSetExceptions(kind: OrthoKind) {
         setExceptions((prevExceptions) => ({
@@ -26,12 +37,18 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
 
     return (
         <div className="settings-page">
-            <TopActionBar contentPlacement="--start">
-                <BackButton onReturn={onReturn} />
+            <TopActionBar contentPlacement="start">
+                <BackButton
+                    onReturn={() => {
+                        handleCompanyInputBlur();
+                        handleSecretInputBlur();
+                        onReturn();
+                    }}
+                />
                 <h2>Настройки</h2>
             </TopActionBar>
             <div>
-                <section className="exceptions">
+                <section className="settings-section exceptions">
                     <h3>Исключения</h3>
                     <p>Типы примечаний, которые будут включены в проверку.</p>
                     <div className="alert-wrapper">
@@ -48,7 +65,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkGrammar"]}
                                     onChange={() => handleSetExceptions(OrthoKind["GRAMMAR"])}
-                                    className={exceptions["mkGrammar"] ? "" : "muted"}
+                                    class={exceptions["mkGrammar"] ? "" : "muted"}
                                 >
                                     Грамматика
                                 </sp-checkbox>
@@ -60,7 +77,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() =>
                                         handleSetExceptions(OrthoKind["PAPER_STRUCTURE"])
                                     }
-                                    className={exceptions["mkPaperStructure"] ? "" : "muted"}
+                                    class={exceptions["mkPaperStructure"] ? "" : "muted"}
                                 >
                                     Оформление
                                 </sp-checkbox>
@@ -73,7 +90,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkPunctuation"]}
                                     onChange={() => handleSetExceptions(OrthoKind["PUNCTUATION"])}
-                                    className={exceptions["mkPunctuation"] ? "" : "muted"}
+                                    class={exceptions["mkPunctuation"] ? "" : "muted"}
                                 >
                                     Пунктуация
                                 </sp-checkbox>
@@ -86,7 +103,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkSemantic"]}
                                     onChange={() => handleSetExceptions(OrthoKind["SEMANTIC"])}
-                                    className={exceptions["mkSemantic"] ? "" : "muted"}
+                                    class={exceptions["mkSemantic"] ? "" : "muted"}
                                 >
                                     Семантика
                                 </sp-checkbox>
@@ -98,7 +115,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkSpelling"]}
                                     onChange={() => handleSetExceptions(OrthoKind["SPELLING"])}
-                                    className={exceptions["mkSpelling"] ? "" : "muted"}
+                                    class={exceptions["mkSpelling"] ? "" : "muted"}
                                 >
                                     Орфография
                                 </sp-checkbox>
@@ -108,7 +125,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkStyle"]}
                                     onChange={() => handleSetExceptions(OrthoKind["STYLE"])}
-                                    className={exceptions["mkStyle"] ? "" : "muted"}
+                                    class={exceptions["mkStyle"] ? "" : "muted"}
                                 >
                                     Стилистика
                                 </sp-checkbox>
@@ -118,7 +135,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkTypography"]}
                                     onChange={() => handleSetExceptions(OrthoKind["TYPOGRAPHY"])}
-                                    className={exceptions["mkTypography"] ? "" : "muted"}
+                                    class={exceptions["mkTypography"] ? "" : "muted"}
                                 >
                                     Типографика
                                 </sp-checkbox>
@@ -128,7 +145,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                 <sp-checkbox
                                     checked={exceptions["mkYo"]}
                                     onChange={() => handleSetExceptions(OrthoKind["YO"])}
-                                    className={exceptions["mkYo"] ? "" : "muted"}
+                                    class={exceptions["mkYo"] ? "" : "muted"}
                                 >
                                     Буква Ё
                                 </sp-checkbox>
@@ -136,6 +153,45 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                             </li>
                         </ul>
                     </div>
+                </section>
+                <section className="settings-section">
+                    <h3>API</h3>
+                    <p>
+                        Доступ к API выдаётся администрацией Литеры по запросу партнёра. Секретный
+                        ключ нужно держать втайне, поскольку именно он будет использоваться для
+                        подтверждения полномочий пользователей и сайта при работе с Литерой.
+                    </p>
+                    <form>
+                        <div className="input-wrapper">
+                            <label>
+                                {" "}
+                                Идентификатор компании (company)
+                                <input
+                                    value={company}
+                                    onChange={handleCompanyChange}
+                                    onBlur={handleCompanyInputBlur}
+                                />
+                            </label>
+                        </div>
+                        <div className="input-wrapper">
+                            <label>
+                                {" "}
+                                Секретный ключ (secret)
+                                <input
+                                    value={secret}
+                                    onChange={handleSecretChange}
+                                    onBlur={handleSecretInputBlur}
+                                />
+                            </label>
+                        </div>
+                    </form>
+                </section>
+                <section className="settings-section">
+                    <h3>Высота выделения аннотаций в тексте</h3>
+                    <p>
+                        Плагин рассчитывает высоту выделения аннотаций исходя из размера текста у
+                        стиля &quot;[основной абзац]&quot;{" "}
+                    </p>
                 </section>
             </div>
         </div>
