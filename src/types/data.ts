@@ -16,7 +16,7 @@ export interface ExtendedAnnotationStats extends AnnotationStats {
 }
 
 export interface CheckedDocumentData {
-    checkedDocumentName: Document["name"];
-    checkId: string;
-    checkedText: TextVariations | null;
+    name: Document["name"];
+    id: string;
+    text: TextVariations | null;
 }
