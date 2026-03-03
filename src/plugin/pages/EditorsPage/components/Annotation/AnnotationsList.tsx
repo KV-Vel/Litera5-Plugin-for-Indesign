@@ -3,16 +3,19 @@ import { AnnotationContainer } from "./AnnotationContainer";
 import { ExtendedAnnotationStats, TextVariations, TypoData } from "../../../../../types/data";
 import "./AnnotationsList.scss";
 import { AlertVariant } from "../../../../components/Alert/types";
-import Alert from "../../../../components/Alert/Alert";
-import StatisticBadge from "../../../../components/StatisticBadge/StatisticBadge";
-import capitalize from "../../../../utils/capitalize";
+import { Alert, StatisticBadge } from "../../../../components";
 import { RemoveAction } from "../../../../reducers/typoDataReducer";
 import { OrthoKind } from "litera5-api-js-client";
 import { STYLES_NAMES } from "../../../../../indesign/constants";
-import { useWithCheckedDocumentOpen } from "../../../../hooks/useWithCheckedDocumentOpen";
+import { useWithDocumentOpen } from "../../../../hooks/useWithDocumentOpen";
 import { ContextValueType, StatsContext } from "../../../../context/StatsContext";
 import { app } from "../../../../../globals";
 import { TypoDataContext } from "../../../../context/TyposDataContext";
+import { capitalize } from "../../../../utils";
+import {
+    CheckedDocumentContext,
+    CheckedDocumentDataType,
+} from "../../../../context/CheckedDocumentContext";
 
 type AnnotationsListProps = {
     selectedKinds: ExtendedAnnotationStats["name"][];
@@ -36,7 +39,8 @@ export default function AnnotationsList({
         texts: null,
         kind: null,
     });
-    const { withCheckedDocumentOpen } = useWithCheckedDocumentOpen();
+    const { tryWithDocumentOpen } = useWithDocumentOpen();
+    const { checkedDocumentData } = useContext(CheckedDocumentContext) as CheckedDocumentDataType;
     const typos = useContext(TypoDataContext);
     const deferredKinds = useDeferredValue(selectedKinds);
 
@@ -57,7 +61,7 @@ export default function AnnotationsList({
 
     const onHighlight = useCallback(
         (id: number, texts: TextVariations[], kind: OrthoKind) => {
-            withCheckedDocumentOpen(() => {
+            tryWithDocumentOpen(checkedDocumentData.name, () => {
                 const charStyleGroup = app.activeDocument.characterStyleGroups.itemByName(
                     STYLES_NAMES.CHARACTER_STYLE_GROUP,
                 );
@@ -67,7 +71,7 @@ export default function AnnotationsList({
                 setActiveAnnotation((prevActive) => {
                     if (prevActive.texts) {
                         // Возвращаем предыдущему активному выделению его прежний стиль символов
-                        const prevOrthoKindStyle = charStyleGroup!.characterStyles.itemByName(
+                        const prevOrthoKindStyle = charStyleGroup.characterStyles.itemByName(
                             prevActive.kind!,
                         );
                         prevActive.texts.forEach((txtObj) =>
@@ -83,11 +87,11 @@ export default function AnnotationsList({
                     texts.forEach((txtObj) => txtObj.applyCharacterStyle(activeCharStyle!));
                     texts[0].showText();
 
-                    return { id: id, texts: texts, kind: kind };
+                    return { id, texts, kind };
                 });
             });
         },
-        [withCheckedDocumentOpen],
+        [checkedDocumentData.name, tryWithDocumentOpen],
     );
 
     if (kindsNotSelected) {
