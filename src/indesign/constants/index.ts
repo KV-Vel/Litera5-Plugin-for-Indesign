@@ -1,4 +1,3 @@
-export { STYLES_NAMES } from "./stylesNames";
-export { COLORS_STRUCTURE } from "./colors";
-export { CHARACTER_STYLES_SETTINGS, BIG_RATIO, SMALL_RATIO } from "./characterStylesSettings";
-export { FILL_COLORS } from "./colors";
+export * from "./names";
+export { COLORS_STRUCTURE, FILL_COLORS } from "./colors";
+export * from "./highlightSettings";
