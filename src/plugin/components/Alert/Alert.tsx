@@ -9,7 +9,7 @@ interface AlertProps extends React.PropsWithChildren {
     onClose?: () => void;
 }
 
-export default function Alert({
+export function Alert({
     header,
     description,
     children,
@@ -21,7 +21,7 @@ export default function Alert({
         <div className={`alert ${type.toLowerCase()}`}>
             <div className="alert__inner">
                 <div className="alert__icon-wrapper">
-                    <sp-icon name={`ui:${type}${iconSize}`} className="alert__icon"></sp-icon>
+                    <sp-icon name={`ui:${type}${iconSize}`} class="alert__icon"></sp-icon>
                 </div>
                 <div className="alert__text-wrapper">
                     <strong>{header}</strong>

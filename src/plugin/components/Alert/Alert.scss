@@ -110,6 +110,15 @@
     }
 }
 
+.alert {
+    &.bottom {
+        position: initial;
+    }
+    &.top {
+        position: absolute;
+    }
+}
+
 .alert__inner {
     display: flex;
 

@@ -1,7 +1,7 @@
 import "./StaticBadge.scss";
 import { StatisticBadgeProps } from "./types";
 
-export default function StatisticBadge({
+export function StatisticBadge({
     badgeStyle,
     remainedTypos,
     size = "medium",

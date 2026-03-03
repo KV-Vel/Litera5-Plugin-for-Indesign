@@ -4,11 +4,11 @@ interface BackButtonType {
     onReturn: () => void;
 }
 
-export default function BackButton({ onReturn }: BackButtonType) {
+export function BackButton({ onReturn }: BackButtonType) {
     return (
-        <div onClick={onReturn} className="return-custom-btn">
+        <div onClick={onReturn} className="return-btn-wrapper">
             <svg
-                className="back-btn-icon"
+                className="return-btn-icon"
                 width="20px"
                 height="20px"
                 viewBox="0 0 52 52"
