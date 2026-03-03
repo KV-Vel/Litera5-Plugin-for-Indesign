@@ -37,3 +37,4 @@ src/hybrid/win/.vs
 scripts/mac-sign.sh
 
 todo.md
+src/plugin/constants
