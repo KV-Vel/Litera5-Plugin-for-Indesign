@@ -5,11 +5,11 @@ import {
     TextVariations,
     TypoData,
 } from "../../types/data";
-
-import { indesignUtils } from "../../indesign/utils";
 import { initIndesignSettings } from "../../indesign/settings/settings";
 import { app } from "../../globals";
 import { TextFrame } from "indesign";
+import { getTextFromCharsPositions } from "../../indesign/utils";
+import { UserSettings } from "../../types/settings";
 
 type AppData = {
     typos: TypoData[];
@@ -17,14 +17,14 @@ type AppData = {
     checkedDocData: CheckedDocumentData;
 };
 
-export default function createAppDataFromResponse(
+export function createAppDataFromResponse(
     { annotations, stats }: CheckOgxtResultsResponse,
     selection: TextVariations | TextFrame,
-    exceptions: Record<OrthoKind, boolean>,
+    settings: UserSettings,
 ): AppData {
     // На случай, если пользователь закроет документ до начала выделения ошибок.
     if (!app.documents.length) {
-        throw new Error("Не удалось отметить ошибки, т.к не открыт ни один документ.");
+        throw new Error("Не удалось отметить ошибки, т.к проверяемый документ был закрыт.");
     }
 
     const textHasNoTypos = !annotations?.annotations || !stats?.annotations;
@@ -34,25 +34,22 @@ export default function createAppDataFromResponse(
             typos: [],
             stats: [],
             checkedDocData: {
-                checkedDocumentName: app.activeDocument.name,
-                checkedText: textToCheck,
-                checkId: crypto.randomUUID(),
+                name: app.activeDocument.name,
+                text: textToCheck,
+                id: crypto.randomUUID(),
             },
         };
     }
+
     const characterStyleGroup = initIndesignSettings();
     const annotationTypeChilds = new Map();
     const userFilteredAnnotations = annotations.annotations.filter(
-        (item) => exceptions[item.kind as OrthoKind] === true,
+        (item) => settings.exceptions[item.kind as OrthoKind] === true,
     );
 
     const typosData = userFilteredAnnotations.map((typo) => {
         const textWithTypo = typo.position.map(({ start, end }) => {
-            const selectedTypoInText = indesignUtils.getTextFromCharsPositions(
-                start,
-                end,
-                textToCheck,
-            );
+            const selectedTypoInText = getTextFromCharsPositions(start, end, textToCheck);
             // Возможно, лучше действительно сразу взять все characterStyles чем для условных 20 ошибок каждый раз брать новый стиль
             const charactersHighlightStyle = characterStyleGroup.characterStyles.itemByName(
                 typo.kind,
@@ -69,16 +66,12 @@ export default function createAppDataFromResponse(
             kindStat.push(typo.id);
         }
 
-        return {
-            typo,
-            selection: textWithTypo,
-            hidden: false,
-        };
+        return { typo, selection: textWithTypo };
     });
     return {
         typos: typosData,
         stats: stats.annotations
-            .filter((item) => exceptions[item.kind as OrthoKind] === true)
+            .filter((item) => settings.exceptions[item.kind as OrthoKind] === true)
             .map((annotationStat) => ({
                 ...annotationStat,
                 name: annotationStat.name === "ё" ? "Буква Ё" : annotationStat.name,
@@ -86,9 +79,9 @@ export default function createAppDataFromResponse(
                 typoIds: annotationTypeChilds.get(annotationStat.kind),
             })),
         checkedDocData: {
-            checkedDocumentName: app.activeDocument.name,
-            checkedText: textToCheck,
-            checkId: crypto.randomUUID(),
+            name: app.activeDocument.name,
+            text: textToCheck,
+            id: crypto.randomUUID(),
         },
     };
 }
