@@ -1,4 +1,4 @@
-export default function capitalize(text: string) {
+export function capitalize(text: string) {
     if (!text.trim()) {
         return text;
     }
