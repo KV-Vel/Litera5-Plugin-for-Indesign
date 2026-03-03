@@ -6,23 +6,24 @@ import { CheckOgxtResultsResponse } from "litera5-api-js-client";
 import AuthPage from "./plugin/pages/AuthPage/AuthPage";
 
 export const App = () => {
-    const [requestStatus, setRequestStatus] = useState<"Success" | "Fail" | null>(null);
+    const [requestStatus, setRequestStatus] = useState<"Success" | null>(null);
     const [login, setLogin] = useState("");
 
     function onLoginChange(value: string) {
         setLogin(value);
     }
 
-    async function onRequest(fn: () => Promise<CheckOgxtResultsResponse | undefined>) {
+    async function onRequest(request: () => Promise<CheckOgxtResultsResponse | undefined>) {
         try {
-            const response = await fn();
+            const response = await request();
 
             if (response) {
                 setRequestStatus("Success");
             }
         } catch (error) {
-            // setRequestStatus("Fail");
-            console.error(error instanceof Error ? error.message : "Не удалось выполнить проверку");
+            console.error(
+                error instanceof Error ? error.message : "Не удалось выполнить проверку.",
+            );
         }
     }
 
@@ -32,7 +33,6 @@ export const App = () => {
 
     return (
         <>
-            {/* {requestStatus === "Fail"} Alert...с кнопкой ОК которая заресетит requestStatus на Null и таким образом выкинет обратно в форму*/}
             {!requestStatus && (
                 <AuthPage login={login} onLoginChange={onLoginChange} onRequest={onRequest} />
             )}
