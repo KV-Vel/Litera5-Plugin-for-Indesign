@@ -3,15 +3,17 @@ import { TextVariations } from "../../types/data";
 
 /**
  * @description сбрасывает стиль символов на стиль по умолчанию — [Без стиля]
- * @param texts текстовые объекты, у которых должен быть сброшен применненный стиль символов
+ * @param texts текстовые объекты, у которых должен быть сброшен примененный стиль символов
  */
-export default function resetCharacterStyles(texts: TextVariations[]) {
-    const defaultCharStyle = app.activeDocument.characterStyles.itemByName("[Без стиля]");
+export function resetCharacterStyles(texts: TextVariations[]) {
+    const defaultCharStyle = app.activeDocument.characterStyles.firstItem(); // Стиль символов - [Без стиля]
+    let errors = 0;
     /**
      * Индизайн багует при применении стиля [Без стиля] через код и не снимает стиль.
      * Чтобы сработало, нужно очистить стили символов через clearOverrides.
-     * Однако clearOverrides убирает также сжатие текста, которое могло быть применено, что очень мешает.
-     * Поэтому выход только в создании дополнительного стиля на основе [Без стиля] и последующим его удалении (чтобы сбросился на Без стиля автоматом).
+     * Однако clearOverrides убирает также сжатие текста, которое могло быть применено.
+     * Поэтому выход только в создании дополнительного стиля на основе [Без стиля] и последующем его удалении (чтобы сбросился на [Без стиля] автоматом).
+     * Это тоже не идеальный вариант, потому что если по тексту где-то применены другие стили символов, то они соответственно будут сброшены
      * @see https://community.adobe.com/t5/indesign-discussions/applying-none-character-style/m-p/2329089
      */
     let deletingCharStyle = app.activeDocument.characterStyles.itemByName("toDelete");
@@ -24,19 +26,29 @@ export default function resetCharacterStyles(texts: TextVariations[]) {
 
     texts.forEach((text) => {
         /**
-         * Из-за проверки на валидность появляется баг с тем, когда используя, уже отмеченные ошибки в тексте,
-         * пользователь добавил новые слова в текст, тогда ссылка на объект с текстом в индизе
-         * будет обновляться и выделение текста будет неточным
+         * Из-за проверки текстового объекта indesign на isValid JS обновляет ссылку на этот объект.
+         * Таким образом, если пользователь добавит новые слова в уже проверенный текст - тогда ссылка на объект с текстом в индизе будет обновляться
+         * и выделение текста будет неточным
          */
 
         // if (!text.isValid) {
         //     return;
         // }
+        try {
+            app.select(text);
+            text.applyCharacterStyle(deletingCharStyle);
+        } catch (_) {
+            errors += 1;
+        }
 
-        app.select(text);
-        text.applyCharacterStyle(deletingCharStyle);
         // text.clearOverrides(indesign.OverrideType.CHARACTER_ONLY);
     });
 
     deletingCharStyle.remove(defaultCharStyle);
+
+    if (errors > 0) {
+        throw new Error(
+            `Не удалось сбросить выделение для некоторых ошибок в тексте. Не удалось сбросить ошибок в тексте: ${errors} `,
+        );
+    }
 }
