@@ -1,0 +1,40 @@
+.error-boundary,
+.error-boundary__inner-wrapper,
+.error-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.error-boundary {
+    height: 100%;
+    justify-content: center;
+
+    sp-button {
+        padding: 0 1rem;
+    }
+
+    &__btn-wrapper {
+        margin-top: 2rem;
+    }
+}
+
+.error-boundary__inner-wrapper {
+    align-items: center;
+    padding: 0 1rem;
+
+    & > h2,
+    & > p {
+        margin-bottom: 1rem;
+    }
+}
+
+.error-info {
+    width: 100%;
+    & > p:nth-child(n) {
+        margin-bottom: 0.5rem;
+    }
+
+    &--red {
+        color: #8b002d;
+    }
+}
