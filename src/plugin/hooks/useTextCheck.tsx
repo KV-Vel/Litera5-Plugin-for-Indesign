@@ -1,52 +1,31 @@
 import { useContext, useState } from "react";
-import { CheckOgxtResultsResponse, CheckState, OrthoKind } from "litera5-api-js-client";
-import textCleanUp from "../../indesign/textCleanUp/textCleanUp";
+import { CheckOgxtResultsResponse, CheckState, createApi } from "litera5-api-js-client";
 import { TextVariations } from "../../types/data";
 import { litera5Request } from "../../litera5/litera5Request";
 import { indesignSelectionIsValid, loginIsValid } from "../utils/validation";
-import createAppDataFromResponse from "../utils/createAppDataFromResponse";
 import { DispatchContext } from "../context/DispatchContext";
 import { TextFrame } from "indesign";
 import { CheckedDocumentContext, CheckedDocumentDataType } from "../context/CheckedDocumentContext";
 import { ContextValueType, StatsContext } from "../context/StatsContext";
-
-type ProgressType = Pick<CheckOgxtResultsResponse, "message" | "progress">;
-
-interface ErrorState {
-    hasError: boolean;
-    message: Error["message"];
-}
-
-type HandleTextCheckProps = (
-    login: string,
-    selection: ReturnType<<T extends { constructorName: string }>() => T> | undefined,
-    exceptions: Record<OrthoKind, boolean>,
-) => Promise<CheckOgxtResultsResponse | undefined>;
-
-type UseTextCheckReturn = [
-    isLoading: boolean,
-    state: ProgressType,
-    errorState: ErrorState,
-    clearError: () => void,
-    handleTextCheck: HandleTextCheckProps,
-];
+import { UserSettings } from "../../types/settings";
+import { getSelection, textCleanUp } from "../../indesign/utils";
+import { createAppDataFromResponse } from "../utils";
+import { getSecureStorageData } from "../utils/getSecureStorageData";
+import { SECURE_STORAGE_KEYS } from "../constants";
 
 const initialProgressState = { progress: 0, message: "Запуск проверки" };
 
-export default function useTextCheck(): UseTextCheckReturn {
+export default function useTextCheck() {
     const [isLoading, setIsLoading] = useState(false);
     const [progressState, setProgressState] = useState(initialProgressState);
     const { setCheckedDocumentData } = useContext(
         CheckedDocumentContext,
     ) as CheckedDocumentDataType;
     const dispatch = useContext(DispatchContext);
-    const [, setStats] = useContext(StatsContext) as ContextValueType;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, setStats] = useContext(StatsContext) as ContextValueType;
 
-    const [requestError, setRequestError] = useState<ErrorState>({
-        // hasError ненужно. Достаточно {message: string} | null
-        hasError: false,
-        message: "",
-    });
+    const [requestError, setRequestError] = useState("");
 
     function readProgress(response: CheckOgxtResultsResponse) {
         if (response.state === CheckState.CHECKED_SUCCESS) {
@@ -60,58 +39,52 @@ export default function useTextCheck(): UseTextCheckReturn {
         }
     }
 
-    function runValidation(
-        login: string,
-        selection: ReturnType<<T extends { constructorName: string }>() => T> | undefined,
-    ) {
-        let inputIsValid = false;
-
-        const loginPatternValidity = loginIsValid(login);
-        if (!loginPatternValidity.valid) {
-            setRequestError({ hasError: true, message: loginPatternValidity.errorMessage! });
-            return inputIsValid;
-        }
-
-        const indesignSelectionValidity = indesignSelectionIsValid(selection);
-        if (!indesignSelectionValidity.valid) {
-            setRequestError({
-                hasError: true,
-                message: indesignSelectionValidity.errorMessage!,
-            });
-            return inputIsValid;
-        }
-
-        inputIsValid = true;
-        return inputIsValid;
+    function runValidation(login: string, selection: ReturnType<typeof getSelection>) {
+        loginIsValid(login);
+        indesignSelectionIsValid(selection);
     }
 
-    async function handleTextCheck<T extends { constructorName: string }>(
+    async function handleTextCheck(
         login: string,
-        selection: T | TextFrame | TextVariations | undefined,
-        exceptions: Record<OrthoKind, boolean>,
+        selection: ReturnType<typeof getSelection>,
+        settings: UserSettings,
     ) {
-        const isInputValid = runValidation(login, selection);
-        if (!isInputValid) return;
-
-        // Если ошибки не были закрыты, сбрасываем вручную перед началом проверки
-        if (requestError.hasError) {
-            setRequestError({ hasError: false, message: "" });
-        }
-
-        const [plainText, selectionObject] = textCleanUp(selection as TextFrame | TextVariations);
-
-        setIsLoading(true);
-
         try {
-            const documentCheckId = await litera5Request.initLitera5Check(login, plainText);
+            runValidation(login, selection);
+
+            // Если ошибки не были закрыты, сбрасываем вручную перед началом проверки
+            if (requestError) {
+                setRequestError("");
+            }
+
+            const [plainText, selectionObject] = textCleanUp(
+                selection as TextFrame | TextVariations,
+            );
+
+            setIsLoading(true);
+
+            const config = {
+                company: (await getSecureStorageData(SECURE_STORAGE_KEYS.COMPANY)).trim(),
+                secret: (await getSecureStorageData(SECURE_STORAGE_KEYS.SECRET)).trim(),
+            };
+            const apiLitera5 = createApi(config);
+            const documentCheckId = await litera5Request.initLitera5Check(
+                login,
+                plainText,
+                apiLitera5,
+            );
             if (documentCheckId) {
                 const litera5Response: CheckOgxtResultsResponse =
-                    await litera5Request.waitForCheckToComplete(documentCheckId, readProgress);
+                    await litera5Request.waitForCheckToComplete(
+                        documentCheckId,
+                        readProgress,
+                        apiLitera5,
+                    );
 
                 const { typos, stats, checkedDocData } = createAppDataFromResponse(
                     litera5Response,
                     selectionObject,
-                    exceptions,
+                    settings,
                 );
                 setStats(stats);
                 dispatch({ type: "SET_DATA", payload: { data: typos } });
@@ -120,10 +93,7 @@ export default function useTextCheck(): UseTextCheckReturn {
             }
         } catch (error) {
             console.error(error);
-            setRequestError({
-                hasError: true,
-                message: error instanceof Error ? error.message : "Что-то пошло не так...",
-            });
+            setRequestError(error instanceof Error ? error.message : "Что-то пошло не так...");
         } finally {
             setProgressState(initialProgressState);
             setIsLoading(false);
@@ -134,7 +104,7 @@ export default function useTextCheck(): UseTextCheckReturn {
         isLoading,
         progressState,
         requestError,
-        () => setRequestError({ hasError: false, message: "" }),
+        () => setRequestError(""),
         handleTextCheck,
     ] as const;
 }
