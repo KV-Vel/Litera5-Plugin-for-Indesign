@@ -1,15 +1,23 @@
 .settings-page {
     overflow: auto;
+    position: absolute;
+    height: 100%;
+
     .toolbar {
         & > h2 {
             color: var(--text-base);
         }
     }
+
+    form {
+        & > .input-wrapper {
+            margin-top: 0.5rem;
+        }
+    }
 }
 
-.exceptions {
-    padding: 1.5rem;
-    border-radius: $border-radius-m;
+.settings-section {
+    padding: 1rem 1.5rem;
     & > p {
         color: var(--text-muted);
     }
@@ -17,7 +25,9 @@
     & > .alert-wrapper {
         margin: 1rem 0;
     }
+}
 
+.exceptions {
     & > .exceptions__list {
         display: flex;
         justify-content: space-between;
