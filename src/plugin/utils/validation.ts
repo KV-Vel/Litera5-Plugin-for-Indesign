@@ -1,18 +1,11 @@
 import { TextFrame } from "indesign";
 import { TextVariations } from "../../types/data";
-import { LITERA5_MIN_TEXT_LENGTH, LITERA5_LOGIN_PATTERN } from "../../litera5/constants";
+import { LITERA5_MIN_TEXT_LENGTH } from "../../litera5/constants";
 import { getSelection } from "../../indesign/utils";
 
 export function loginIsValid(login: string) {
     if (!login.trim().length) {
         throw new Error("Не указан логин.");
-    }
-
-    const loginHasValidPattern = LITERA5_LOGIN_PATTERN.test(login.trim());
-    if (!loginHasValidPattern) {
-        throw new Error(
-            "Логин не соответствует формату. Правильный формат: ivanov.av, где invanov — фамилия, а av — инициалы.",
-        );
     }
 
     return true;
