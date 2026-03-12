@@ -58,7 +58,8 @@ export default function AuthPage({ login, onLoginChange, onRequest }: AuthPagePr
                                 <span>3</span>
                                 <article>
                                     <h4>
-                                        Работайте с привычным Вам интерфейсом, прямиком в Indesign!
+                                        Работайте с привычным Вам интерфейсом, прямиком в Adobe
+                                        InDesign!
                                     </h4>
                                     <p>
                                         Нажмите кнопку &quot;Проверить текст&quot; и дождитесь
