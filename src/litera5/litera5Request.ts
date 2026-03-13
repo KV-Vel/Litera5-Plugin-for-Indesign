@@ -36,10 +36,10 @@ async function initLitera5Check(
     } catch (error) {
         if (error instanceof Response) {
             const errorMessage = await error.text();
-            throw new Error(errorMessage || "Неудалось извлечь ошибку: неизвестная ошибка.");
+            throw new Error(errorMessage || "Unable to get an error text: unknown error.");
         }
 
-        throw new Error("Сбой во время запуска проверки. ");
+        throw new Error("Failed to launch text check.");
     }
 }
 
