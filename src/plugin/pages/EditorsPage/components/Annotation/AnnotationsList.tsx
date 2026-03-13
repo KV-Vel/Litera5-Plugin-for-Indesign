@@ -100,8 +100,8 @@ export default function AnnotationsList({
         return (
             <div className="editors-page__alert-wrapper">
                 <Alert
-                    header="Имеются выключенные примечания."
-                    description="Вы можете включить их и продолжить работу."
+                    header="You have disabled annotation types."
+                    description="You can enable them and continue working with text."
                     type={AlertVariant.QUESTION}
                 >
                     <ul className="available-kinds-list">
@@ -121,8 +121,8 @@ export default function AnnotationsList({
         return (
             <div className="editors-page__alert-wrapper">
                 <Alert
-                    header="У вас не осталось больше примечаний."
-                    description="Пожалуйста, перепроверьте ваш текст или закончите работу над ним и приступайте к работе над следующим."
+                    header="No more annotations left."
+                    description="Please double-check your text, finish your work with it and move on to the next."
                     type={AlertVariant.SUCCESS}
                 />
             </div>

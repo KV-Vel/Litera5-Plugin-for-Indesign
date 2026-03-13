@@ -24,14 +24,14 @@ export default function RequestCheckForm({ login, onLoginChange, onRequest }: Fo
             <div className="form__group">
                 <label>
                     {" "}
-                    Логин от Литеры
+                    Login from Litera5
                     <input placeholder="ivanov.av" value={login} onChange={handleLoginChange} />
                 </label>
             </div>
             {errorState && (
                 <div className="form__alert-wrapper">
                     <Alert
-                        header="Ошибка"
+                        header="Error"
                         description={errorState}
                         type={AlertVariant.WARNING}
                         onClose={clearError}
@@ -49,7 +49,7 @@ export default function RequestCheckForm({ login, onLoginChange, onRequest }: Fo
                 onClick={() => handleRequest(login.trim(), getSelection())}
             >
                 <sp-icon name="ui:Magnifier"></sp-icon>
-                Проверить текст
+                Check text
             </sp-button>
         </form>
     );

@@ -38,7 +38,7 @@ export default function MultiSelect({
                     disabled={hasNoRemainedTypos}
                     class={isEveryKindSelected ? "" : "muted"}
                 >
-                    Все примечания
+                    All annotations
                 </sp-checkbox>
                 <StatisticBadge badgeStyle="everyTypo" remainedTypos={remainedTyposCount} />
             </li>

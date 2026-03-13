@@ -25,7 +25,7 @@ export default function AuthPage({ login, onLoginChange, onRequest }: AuthPagePr
                 <div className="authpage__header">
                     {/* <Logo /> */}
                     <div onClick={() => setSettingsPageIsActive(true)} className="settings-btn">
-                        <img src={cog} alt="Иконка меню настроек" className="settings-btn__icon" />
+                        <img src={cog} alt="cog" className="settings-btn__icon" />
                     </div>
                 </div>
             </TopActionBar>
@@ -33,47 +33,49 @@ export default function AuthPage({ login, onLoginChange, onRequest }: AuthPagePr
             <div className={`authpage__form-wrapper ${settingsPageIsActive ? "hidden" : ""}`}>
                 <div className="authpage__inner-form-wrapper">
                     <div className="authpage__description">
-                        <h2>Начало проверки</h2>
+                        <h2>Start text check</h2>
 
                         <ol>
                             <li>
                                 <span>1</span>
                                 <article>
-                                    <h4>Введите логин</h4>
+                                    <h4>Enter login</h4>
                                     <p>
-                                        Логин указывается в формате invanov.av, где{" "}
-                                        <strong>ivanov</strong> — фамилия, а <strong>av</strong> —
-                                        инициалы.
+                                        Your login is the string before the @ symbol. For example,
+                                        if your website login is &quot;ivanov.av@example.com&quot;,
+                                        enter &quot;ivanov.av&quot; in this field.
                                     </p>
                                 </article>
                             </li>
                             <li>
                                 <span>2</span>
                                 <article>
-                                    <h4>Выберите текст для проверки</h4>
-                                    <p>Выделите текст во фрейме или сам фрейм.</p>
+                                    <h4>Select text to check</h4>
+                                    <p>Select text in a text frame or text frame itself.</p>
                                 </article>
                             </li>
                             <li>
                                 <span>3</span>
                                 <article>
                                     <h4>
-                                        Работайте с привычным Вам интерфейсом, прямиком в Adobe
+                                        Work with already familiar interface, right in Adobe
                                         InDesign!
                                     </h4>
                                     <p>
-                                        Нажмите кнопку &quot;Проверить текст&quot; и дождитесь
-                                        окончания проверки, <strong>не снимая выделение</strong>.
+                                        {" "}
+                                        Click the &quot;Check text&quot; button and wait for the
+                                        check to complete{" "}
+                                        <strong>without deselecting the text</strong>.
                                     </p>
                                 </article>
                             </li>
                         </ol>
                         <div className="alert-wrapper">
                             <Alert
-                                header="Примечание"
+                                header="Note"
                                 type={AlertVariant.INFO}
-                                description="Проверка будет выполнена от лица пользователя, указанного в поле ниже.
-                                Проверенный текст также будет доступен для просмотра в личном кабинете на сайте Литеры."
+                                description="The text check will be performed under the account of the user specified below.
+                                The checked text will also be available for viewing on the Litera5 website."
                             />
                         </div>
                     </div>

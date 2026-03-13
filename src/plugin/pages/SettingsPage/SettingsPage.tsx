@@ -45,16 +45,16 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                         onReturn();
                     }}
                 />
-                <h2>Настройки</h2>
+                <h2>Settings</h2>
             </TopActionBar>
             <div>
                 <section className="settings-section exceptions">
-                    <h3>Исключения</h3>
-                    <p>Типы примечаний, которые будут включены в проверку.</p>
+                    <h3>Exceptions</h3>
+                    <p>Annotation types which will be included in the text check.</p>
                     <div className="alert-wrapper">
                         <Alert
-                            header="Примечание"
-                            description="Настройки будут применены во время следующей проверки."
+                            header="Note"
+                            description="New settings will be applied during next text check."
                             type={AlertVariant.INFO}
                         />
                     </div>
@@ -67,7 +67,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["GRAMMAR"])}
                                     class={exceptions["mkGrammar"] ? "" : "muted"}
                                 >
-                                    Грамматика
+                                    Grammar
                                 </sp-checkbox>
                                 <StatisticBadge badgeStyle={OrthoKind["GRAMMAR"]} size="small" />
                             </li>
@@ -79,7 +79,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     }
                                     class={exceptions["mkPaperStructure"] ? "" : "muted"}
                                 >
-                                    Оформление
+                                    Paper structure
                                 </sp-checkbox>
                                 <StatisticBadge
                                     badgeStyle={OrthoKind["PAPER_STRUCTURE"]}
@@ -92,7 +92,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["PUNCTUATION"])}
                                     class={exceptions["mkPunctuation"] ? "" : "muted"}
                                 >
-                                    Пунктуация
+                                    Punctuation
                                 </sp-checkbox>
                                 <StatisticBadge
                                     badgeStyle={OrthoKind["PUNCTUATION"]}
@@ -105,7 +105,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["SEMANTIC"])}
                                     class={exceptions["mkSemantic"] ? "" : "muted"}
                                 >
-                                    Семантика
+                                    Semantic
                                 </sp-checkbox>
                                 <StatisticBadge badgeStyle={OrthoKind["SEMANTIC"]} size="small" />
                             </li>
@@ -117,7 +117,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["SPELLING"])}
                                     class={exceptions["mkSpelling"] ? "" : "muted"}
                                 >
-                                    Орфография
+                                    Spelling
                                 </sp-checkbox>
                                 <StatisticBadge badgeStyle={OrthoKind["SPELLING"]} size="small" />
                             </li>
@@ -127,7 +127,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["STYLE"])}
                                     class={exceptions["mkStyle"] ? "" : "muted"}
                                 >
-                                    Стилистика
+                                    Style
                                 </sp-checkbox>
                                 <StatisticBadge badgeStyle={OrthoKind["STYLE"]} size="small" />
                             </li>
@@ -137,7 +137,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["TYPOGRAPHY"])}
                                     class={exceptions["mkTypography"] ? "" : "muted"}
                                 >
-                                    Типографика
+                                    Typography
                                 </sp-checkbox>
                                 <StatisticBadge badgeStyle={OrthoKind["TYPOGRAPHY"]} size="small" />
                             </li>
@@ -147,7 +147,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                                     onChange={() => handleSetExceptions(OrthoKind["YO"])}
                                     class={exceptions["mkYo"] ? "" : "muted"}
                                 >
-                                    Буква Ё
+                                    The letter &quot;Ё&quot;
                                 </sp-checkbox>
                                 <StatisticBadge badgeStyle={OrthoKind["YO"]} size="small" />
                             </li>
@@ -157,15 +157,15 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                 <section className="settings-section">
                     <h3>API</h3>
                     <p>
-                        Доступ к API выдаётся администрацией Литеры по запросу партнёра. Секретный
-                        ключ нужно держать втайне, поскольку именно он будет использоваться для
-                        подтверждения полномочий пользователей и сайта при работе с Литерой.
+                        API access is provided by the Litera5 administration upon partner&apos;s
+                        request. You must keep the API key secure, as it will be used to
+                        authenticate users when working with Litera5.
                     </p>
                     <form>
                         <div className="input-wrapper">
                             <label>
                                 {" "}
-                                Идентификатор компании (company)
+                                Company identificator (company)
                                 <input
                                     value={company}
                                     onChange={handleCompanyChange}
@@ -176,7 +176,7 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                         <div className="input-wrapper">
                             <label>
                                 {" "}
-                                Секретный ключ (secret)
+                                Secret key (secret)
                                 <input
                                     value={secret}
                                     onChange={handleSecretChange}
@@ -187,10 +187,10 @@ export default function SettingsPage({ onReturn }: SettingsPageProps) {
                     </form>
                 </section>
                 <section className="settings-section">
-                    <h3>Высота выделения аннотаций в тексте</h3>
+                    <h3>Annotations highlight height</h3>
                     <p>
-                        Плагин рассчитывает высоту выделения аннотаций исходя из размера текста у
-                        стиля &quot;[основной абзац]&quot;{" "}
+                        The plugin calculates the highlight height of annotations based on the text
+                        size of the &quot;[Basic Paragraph]&quot; style.
                     </p>
                 </section>
             </div>

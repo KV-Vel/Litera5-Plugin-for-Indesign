@@ -132,7 +132,7 @@ export default function EditorsPage(requestProps: RequestProps) {
             )}
             <main className={`editors-page ${isSettingsPageActive ? "hidden" : ""}`}>
                 <TopActionBar>
-                    <Dropdown name="Типы примечаний">
+                    <Dropdown name="Types of annotations">
                         <MultiSelect
                             availableItems={stats}
                             toggleEveryItem={onEveryCheckboxToggle}
@@ -140,7 +140,7 @@ export default function EditorsPage(requestProps: RequestProps) {
                         />
                     </Dropdown>
                     <div onClick={() => setIsSettingsPageActive(true)} className="settings-btn">
-                        <img src={cog} alt="Иконка меню настроек" className="settings-btn__icon" />
+                        <img src={cog} alt="cog" className="settings-btn__icon" />
                     </div>
                 </TopActionBar>
                 <MemoizedList
@@ -158,7 +158,7 @@ export default function EditorsPage(requestProps: RequestProps) {
                 >
                     {inddError && (
                         <Alert
-                            header="Ошибка"
+                            header="Error"
                             description={inddError}
                             type={AlertVariant.WARNING}
                             onClose={clearError}

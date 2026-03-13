@@ -43,13 +43,13 @@ export const AnnotationContainer = memo(function AnnotationContainer({
                 {/**Добавить PURIFY */}
                 <div
                     dangerouslySetInnerHTML={{
-                        __html: `<strong>Совет: </strong> ${typo.suggestion || ""}`,
+                        __html: `<strong>Suggestion: </strong> ${typo.suggestion || ""}`,
                     }}
                     className="annotation__suggestion"
                 ></div>
                 <div
                     dangerouslySetInnerHTML={{
-                        __html: `<strong>Пояснение: </strong> ${typo.explanation}`,
+                        __html: `<strong>Explanation: </strong> ${typo.explanation}`,
                     }}
                     className="annotation__explanation"
                 ></div>

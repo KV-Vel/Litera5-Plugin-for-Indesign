@@ -32,7 +32,7 @@ export function BottomActionBar({
             )}
             {errorState && (
                 <Alert
-                    header="Ошибка"
+                    header="Error"
                     description={errorState}
                     type={AlertVariant.WARNING}
                     onClose={clearError}
@@ -43,11 +43,11 @@ export function BottomActionBar({
              */}
             {children}
             <sp-button onClick={сlearAnnotations} variant="secondary">
-                Очистить подсказки
+                Clear annotations
             </sp-button>
             <sp-button disabled={isLoading} onClick={() => startNewTextCheck(login)}>
                 <sp-icon name="ui:Magnifier"></sp-icon>
-                Начать новую проверку
+                Start new text check
             </sp-button>
         </div>
     );
