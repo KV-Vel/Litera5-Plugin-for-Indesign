@@ -9,7 +9,7 @@ export async function getSecureStorageData(key: string) {
         return decodedData;
     } catch (error) {
         console.error(
-            error instanceof Error ? error.message : "Не удалось извлечь данные из хранилища.",
+            error instanceof Error ? error.message : "Unable to extract data from the storage.",
         );
         return "";
     }

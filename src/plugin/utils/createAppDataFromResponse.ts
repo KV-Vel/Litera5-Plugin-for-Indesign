@@ -74,7 +74,7 @@ export function createAppDataFromResponse(
             .filter((item) => settings.exceptions[item.kind as OrthoKind] === true)
             .map((annotationStat) => ({
                 ...annotationStat,
-                name: annotationStat.name === "ё" ? "Буква Ё" : annotationStat.name,
+                name: getEngAnnotationName(annotationStat.name),
                 selected: true,
                 typoIds: annotationTypeChilds.get(annotationStat.kind),
             })),
@@ -84,4 +84,25 @@ export function createAppDataFromResponse(
             id: crypto.randomUUID(),
         },
     };
+}
+
+function getEngAnnotationName(ruAnnotation: string) {
+    switch (ruAnnotation) {
+        case "орфография":
+            return "Spelling";
+        case "грамматика":
+            return "Grammar";
+        case "пунктуация":
+            return "Punctuation";
+        case "стилистика":
+            return "Style";
+        case "семантика":
+            return "Semantic";
+        case "типографика":
+            return "Typography";
+        case "ё":
+            return "The letter 'Ё'";
+        default:
+            return "Missing name";
+    }
 }

@@ -5,7 +5,7 @@ import { getSelection } from "../../indesign/utils";
 
 export function loginIsValid(login: string) {
     if (!login.trim().length) {
-        throw new Error("Не указан логин.");
+        throw new Error("Login not specified.");
     }
 
     return true;
@@ -13,23 +13,23 @@ export function loginIsValid(login: string) {
 
 export function indesignSelectionIsValid(selection: ReturnType<typeof getSelection>) {
     if (!selection) {
-        throw new Error("Не найден выделенный текст или фрейм.");
+        throw new Error("Unable to find selected text or frame.");
     }
 
     if (selection.constructorName === "Cell") {
-        throw new Error("Плагин не поддерживает проверку текста в таблице.");
+        throw new Error("Plugin does not support checking table cells.");
     }
 
     const selectionWithoutTexts = !("texts" in selection);
     if (selectionWithoutTexts) {
         throw new Error(
-            "Не найден текст в выделенном объекте. Убедитесь, что Вы выделили фрейм или текст в нем.",
+            "Unable to find text in selected object. Make sure text or frame was selected.",
         );
     }
 
     if ((selection as TextFrame).overflows) {
         throw new Error(
-            "В выделенном объекте обнаружен вытесненный текст. Удалите вытесненный текст или переместите его в другой фрейм.",
+            "Selected object has an overflowed text. Delete overflowed text or move it to another frame.",
         );
     }
 
@@ -37,7 +37,7 @@ export function indesignSelectionIsValid(selection: ReturnType<typeof getSelecti
         (selection as TextVariations).texts.firstItem().length > LITERA5_MIN_TEXT_LENGTH;
     if (!selectionReachMinTextLength) {
         throw new Error(
-            "Объём проверяемого текста должен быть не меньше 32 и не больше 100.000 знаков.",
+            "The text must contain no less than 32 and no more than 100.000 characters.",
         );
     }
 
