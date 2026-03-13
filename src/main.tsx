@@ -21,9 +21,7 @@ export const App = () => {
                 setRequestStatus("Success");
             }
         } catch (error) {
-            console.error(
-                error instanceof Error ? error.message : "Не удалось выполнить проверку.",
-            );
+            console.error(error instanceof Error ? error.message : "Failed to initiate request.");
         }
     }
 
