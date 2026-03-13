@@ -48,7 +48,7 @@ export function resetCharacterStyles(texts: TextVariations[]) {
 
     if (errors > 0) {
         throw new Error(
-            `Не удалось сбросить выделение для некоторых ошибок в тексте. Не удалось сбросить ошибок в тексте: ${errors} `,
+            `Failed to reset selection for some errors in the text. Number of annotations failed to reset in the text: ${errors} `,
         );
     }
 }
