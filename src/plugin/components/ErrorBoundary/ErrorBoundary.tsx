@@ -27,17 +27,17 @@ export class ErrorBoundary extends Component<any, ErrorBoundaryProps> {
             return (
                 <main className="error-boundary">
                     <section className="error-boundary__inner-wrapper">
-                        <h2>Произошла непредвиденная ошибка</h2>
+                        <h2>An unexpected error has occurred</h2>
                         <p className="muted">
-                            Если ошибка повторяется, пришлите, пожалуйста, информацию об ошибке на
-                            данный электронный адрес:{" "}
+                            If the error persists, please send information about it to this email
+                            address:{" "}
                             <a href="mailto:kraevvalentin98@gmail.com">kraevvalentin98@gmail.com</a>
                         </p>
                         <section className="error-info">
-                            <p className="muted">Информация об ошибке</p>
-                            <p className="error-info--red">Ошибка: {error.message}</p>
+                            <p className="muted">Error information</p>
+                            <p className="error-info--red">Error: {error.message}</p>
                             {error?.cause && (
-                                <p className="error-info--red">Причина: {error.cause}</p>
+                                <p className="error-info--red">Cause: {error.cause}</p>
                             )}
                         </section>
                         <div className="error-boundary__btn-wrapper">
@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<any, ErrorBoundaryProps> {
                                     location.reload();
                                 }}
                             >
-                                Попробовать снова
+                                Try again
                             </sp-button>
                         </div>
                     </section>
