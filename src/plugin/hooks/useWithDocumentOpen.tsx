@@ -21,12 +21,12 @@ export function useWithDocumentOpen() {
 
                 const isCheckingDocumentActive = makeDocumentActive(checkingDocument);
                 if (!isCheckingDocumentActive) {
-                    throw new Error("Проверяемый документ более недоступен.");
+                    throw new Error("The checked document is no longer accessible.");
                 }
 
                 if (hasDuplicateDocuments(documentName)) {
                     throw new Error(
-                        "Обнаружено несколько документов с одинаковым именем. Закройте тот документ, который не проверяется в настоящий момент.",
+                        "Multiple documents with the same name were found. Please close the document that is not currently being checked.",
                     );
                 }
 
@@ -37,7 +37,9 @@ export function useWithDocumentOpen() {
                 if (err instanceof Error) {
                     setInddError(err.message);
                 } else {
-                    setInddError("Неизвестная ошибка во время выполнения действия в Indesign.");
+                    setInddError(
+                        "An unknown error has occurred while executing the action in InDesign.",
+                    );
                 }
 
                 return false;

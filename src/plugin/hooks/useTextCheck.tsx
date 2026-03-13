@@ -13,7 +13,7 @@ import { createAppDataFromResponse } from "../utils";
 import { getSecureStorageData } from "../utils/getSecureStorageData";
 import { SECURE_STORAGE_KEYS } from "../constants";
 
-const initialProgressState = { progress: 0, message: "Запуск проверки" };
+const initialProgressState = { progress: 0, message: "Initiating text check" };
 
 export default function useTextCheck() {
     const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,7 @@ export default function useTextCheck() {
              * Могу ошибаться, но результат проверки никогда (или почти никогда) не возвращает 100%, хотя статус CHECKED_SUCCESS при этом будет.
              * Поэтому вручную показываем пользователю, что проверка достигла 100%
              */
-            setProgressState({ progress: 100, message: "Отмечаем ошибки в тексте" });
+            setProgressState({ progress: 100, message: "Highlighting errors in the text" });
         } else {
             setProgressState({ progress: response.progress, message: response.message });
         }
@@ -93,7 +93,7 @@ export default function useTextCheck() {
             }
         } catch (error) {
             console.error(error);
-            setRequestError(error instanceof Error ? error.message : "Что-то пошло не так...");
+            setRequestError(error instanceof Error ? error.message : "Something went wrong...");
         } finally {
             setProgressState(initialProgressState);
             setIsLoading(false);
