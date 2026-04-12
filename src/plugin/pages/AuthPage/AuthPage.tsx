@@ -41,9 +41,9 @@ export default function AuthPage({ login, onLoginChange, onRequest }: AuthPagePr
                                 <article>
                                     <h4>Введите логин</h4>
                                     <p>
-                                        Логин указывается в формате invanov.av, где{" "}
-                                        <strong>ivanov</strong> — фамилия, а <strong>av</strong> —
-                                        инициалы.
+                                        В поле &quot;Логин от Литеры&quot; необходимо ввести часть
+                                        логина перед символом @. Например, если логин на сайте —
+                                        ivanov.av@example.com, то в поле будет указано ivanov.av.
                                     </p>
                                 </article>
                             </li>
