@@ -1,9 +1,9 @@
 import { useState } from "react";
 // COMPONENTS
-import EditorsPage from "./plugin/pages/EditorsPage/EditorsPage";
+import EditorsPage from "plugin/pages/EditorsPage/EditorsPage";
 // TYPES
 import { CheckOgxtResultsResponse } from "litera5-api-js-client";
-import AuthPage from "./plugin/pages/AuthPage/AuthPage";
+import AuthPage from "plugin/pages/AuthPage/AuthPage";
 
 export const App = () => {
     const [requestStatus, setRequestStatus] = useState<"Success" | null>(null);
