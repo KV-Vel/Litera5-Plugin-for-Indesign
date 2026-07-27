@@ -1,12 +1,13 @@
 import { app } from "../../globals";
-import { TextVariations } from "../../types/data";
+import { TextVariations } from "types/data";
 
 /**
  * @description сбрасывает стиль символов на стиль по умолчанию — [Без стиля]
  * @param texts текстовые объекты, у которых должен быть сброшен примененный стиль символов
  */
 export function resetCharacterStyles(texts: TextVariations[]) {
-    const defaultCharStyle = app.activeDocument.characterStyles.firstItem(); // Стиль символов - [Без стиля]
+    const { characterStyles } = app.activeDocument;
+    const defaultCharStyle = characterStyles.firstItem(); // Стиль символов - [Без стиля]
     let errors = 0;
     /**
      * Индизайн багует при применении стиля [Без стиля] через код и не снимает стиль.
@@ -16,9 +17,9 @@ export function resetCharacterStyles(texts: TextVariations[]) {
      * Это тоже не идеальный вариант, потому что если по тексту где-то применены другие стили символов, то они соответственно будут сброшены
      * @see https://community.adobe.com/t5/indesign-discussions/applying-none-character-style/m-p/2329089
      */
-    let deletingCharStyle = app.activeDocument.characterStyles.itemByName("toDelete");
+    let deletingCharStyle = characterStyles.itemByName("toDelete");
     if (!deletingCharStyle.isValid) {
-        deletingCharStyle = app.activeDocument.characterStyles.add({
+        deletingCharStyle = characterStyles.add({
             name: "toDelete",
             basedOn: defaultCharStyle,
         });
@@ -37,7 +38,8 @@ export function resetCharacterStyles(texts: TextVariations[]) {
         try {
             app.select(text);
             text.applyCharacterStyle(deletingCharStyle);
-        } catch (_) {
+        } catch (err) {
+            console.log(err);
             errors += 1;
         }
 
