@@ -19,10 +19,11 @@ function createColorGroup(
     swatches: Swatch[],
     otherProperties: object = {},
 ): ColorGroup {
-    return app.activeDocument.colorGroups.add(name, swatches, otherProperties);
+    const { colorGroups } = app.activeDocument;
+    return colorGroups.add(name, swatches, otherProperties);
 }
 
-function createHighlightColorsForGroup(colorValues: TypoColors[]) {
+function createHighlightColors(colorValues: TypoColors[]) {
     return colorValues.flatMap(({ fill, border }) => [
         createColor(fill.value, fill.name),
         createColor(border.value, border.name),
@@ -30,7 +31,8 @@ function createHighlightColorsForGroup(colorValues: TypoColors[]) {
 }
 
 function createColor(value: RGB, name: ColorName, props: object = {}): Color {
-    return app.activeDocument.colors.add({
+    const { colors } = app.activeDocument;
+    return colors.add({
         colorValue: value,
         model: indesign.ColorModel.SPOT, // Тип цвета: Плашечный
         space: indesign.ColorSpace.RGB,
@@ -40,7 +42,8 @@ function createColor(value: RGB, name: ColorName, props: object = {}): Color {
 }
 
 function createCharacterStyleGroup(props: object): CharacterStyleGroup {
-    return app.activeDocument.characterStyleGroups.add(props);
+    const { characterStyleGroups } = app.activeDocument;
+    return characterStyleGroups.add(props);
 }
 
 /**
@@ -48,14 +51,16 @@ function createCharacterStyleGroup(props: object): CharacterStyleGroup {
  * @param group группа, где будут находиться стили
  * @param textSize размер текста исходя из которого будет создаваться высота линии выделения текста
  */
-function createCharacterStylesForEachOrthoKind(group: CharacterStyleGroup, textSize: number) {
+function createCharacterStylesForOrthoKinds(group: CharacterStyleGroup, textSize: number) {
+    const { colors } = app.activeDocument;
+
     const calculatedSettings = {
         underlineWeight: (BIG_RATIO * textSize) / 100,
         underlineOffset: -(SMALL_RATIO * textSize) / 100,
     };
 
     Object.values(OrthoKind).forEach((typoName) => {
-        const color = app.activeDocument.colors.itemByName(`fill (${typoName})`);
+        const color = colors.itemByName(`fill (${typoName})`);
 
         group.characterStyles.add({
             name: typoName,
@@ -78,8 +83,10 @@ function createCharacterStylesForEachOrthoKind(group: CharacterStyleGroup, textS
 /**
  * @description инициализицая параметров, групп и стилей Indesign для работы с плагином
  */
-function initIndesignSettings(): CharacterStyleGroup {
-    const colorGroup = app.activeDocument.colorGroups.itemByName(STYLES_NAMES.COLOR_GROUP);
+function initInddSettings(): CharacterStyleGroup {
+    const { colorGroups, characterStyles, characterStyleGroups } = app.activeDocument;
+    const colorGroup = colorGroups.itemByName(STYLES_NAMES.COLOR_GROUP);
+
     if (colorGroup.isValid) {
         /**
          * Поскольку заблокировать группу нельзя, во избежание изменения параметров стилей пользователем (вручную) —
@@ -87,14 +94,12 @@ function initIndesignSettings(): CharacterStyleGroup {
          */
         colorGroup.remove();
     }
-    const typoSelectionColors = createHighlightColorsForGroup(COLORS_STRUCTURE);
-    createColorGroup(STYLES_NAMES.COLOR_GROUP, typoSelectionColors);
+    const highlightColors = createHighlightColors(COLORS_STRUCTURE);
+    createColorGroup(STYLES_NAMES.COLOR_GROUP, highlightColors);
 
     // Выбирает ["Без стиля"]. Выбор не по имени, чтобы избежать ошибок, если у пользователя интерфейс Indesign не на русском.
-    const defaultCharStyle = app.activeDocument.characterStyles.firstItem();
-    let characterStyleGroup = app.activeDocument.characterStyleGroups.itemByName(
-        STYLES_NAMES.CHARACTER_STYLE_GROUP,
-    );
+    const defaultCharStyle = characterStyles.firstItem();
+    let characterStyleGroup = characterStyleGroups.itemByName(STYLES_NAMES.CHARACTER_STYLE_GROUP);
     if (characterStyleGroup.isValid) {
         characterStyleGroup.remove(defaultCharStyle);
     }
@@ -103,7 +108,7 @@ function initIndesignSettings(): CharacterStyleGroup {
         name: STYLES_NAMES.CHARACTER_STYLE_GROUP,
     });
 
-    createCharacterStylesForEachOrthoKind(
+    createCharacterStylesForOrthoKinds(
         characterStyleGroup,
         Number(getDefaultParagraphStyleFontSize()),
     );
@@ -111,4 +116,4 @@ function initIndesignSettings(): CharacterStyleGroup {
     return characterStyleGroup;
 }
 
-export { initIndesignSettings };
+export { initInddSettings };
