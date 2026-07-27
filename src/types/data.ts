@@ -15,7 +15,7 @@ export interface ExtendedAnnotationStats extends AnnotationStats {
     typoIds: number[];
 }
 
-export interface CheckedDocumentData {
+export interface CheckedDocData {
     name: Document["name"];
     id: string;
     text: TextVariations | null;
