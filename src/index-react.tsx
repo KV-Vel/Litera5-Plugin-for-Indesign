@@ -2,24 +2,26 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import { App } from "./main";
-import TypoDataProvider from "./plugin/context/TyposDataProvider";
-import CheckedDocumentContextProvider from "./plugin/context/CheckedDocumentContext";
-import StatsProvider from "./plugin/context/StatsContext";
-import InddErrorProvider from "./plugin/context/IndesignErrorsContext";
-import { ErrorBoundary } from "./plugin/components";
+import {
+    TyposDataProvider,
+    CheckedDocContextProvider,
+    TyposStatsProvider,
+    ErrorProvider,
+} from "./plugin/context/index";
+import { ErrorBoundary } from "shared/ErrorBoundary/ErrorBoundary";
 
 ReactDOM.createRoot(document.getElementById("app") as HTMLElement).render(
     <React.StrictMode>
         <ErrorBoundary>
-            <InddErrorProvider>
-                <CheckedDocumentContextProvider>
-                    <StatsProvider>
-                        <TypoDataProvider>
+            <ErrorProvider>
+                <CheckedDocContextProvider>
+                    <TyposStatsProvider>
+                        <TyposDataProvider>
                             <App />
-                        </TypoDataProvider>
-                    </StatsProvider>
-                </CheckedDocumentContextProvider>
-            </InddErrorProvider>
+                        </TyposDataProvider>
+                    </TyposStatsProvider>
+                </CheckedDocContextProvider>
+            </ErrorProvider>
         </ErrorBoundary>
     </React.StrictMode>,
 );
