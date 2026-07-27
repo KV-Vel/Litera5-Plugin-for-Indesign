@@ -1,18 +1,17 @@
 import "./RequestCheckTextForm.scss";
-import { AlertVariant } from "../../../../components/Alert/types";
+import { AlertVariant } from "shared/Alert/types";
 import { FormProps } from "../../types";
-import useTextCheck from "../../../../hooks/useTextCheck";
-import { capitalize } from "../../../../utils/capitalize";
-import { getSelection } from "../../../../../indesign/utils";
-import { getUserSettings } from "../../../../utils";
-import { Alert, Loader } from "../../../../components/index";
+import { useTextCheck } from "plugin/hooks/index";
+import { getSelection } from "indd/utils";
+import { getUserSettings, capitalize } from "plugin/utils";
+import { Alert, Loader } from "shared/index";
 
 export default function RequestCheckForm({ login, onLoginChange, onRequest }: FormProps) {
     const [isLoading, checkState, errorState, clearError, handleTextCheck] = useTextCheck();
 
-    function handleRequest(litera5Login: string, selection: ReturnType<typeof getSelection>) {
+    function handleRequest(l5Login: string, selection: ReturnType<typeof getSelection>) {
         const userSettings = getUserSettings();
-        onRequest(() => handleTextCheck(litera5Login, selection, userSettings));
+        onRequest(() => handleTextCheck(l5Login, selection, userSettings));
     }
 
     function handleLoginChange(event: React.ChangeEvent<HTMLInputElement>) {

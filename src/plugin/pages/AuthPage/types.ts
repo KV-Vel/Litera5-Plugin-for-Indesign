@@ -11,6 +11,6 @@ export interface FormProps extends RequestProps {
 }
 
 export type TypoDataContextProps = [
-    { typosData: TypoData[]; stats: ExtendedAnnotationStats[] },
+    { typosData: TypoData[]; typosStats: ExtendedAnnotationStats[] },
     React.Dispatch<React.SetStateAction<TypoData[]>>,
 ];

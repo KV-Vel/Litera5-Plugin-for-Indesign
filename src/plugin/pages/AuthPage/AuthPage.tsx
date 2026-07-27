@@ -5,9 +5,9 @@ import "./AuthPage.scss";
 import RequestCheckForm from "./components/Form/RequestCheckTextForm";
 import { RequestProps } from "./types";
 import cog from "../../../assets/settings-svgrepo-com.svg";
-import TopActionBar from "../EditorsPage/components/TopActionBar/TopActionBar";
-import { Alert } from "../../components";
-import { AlertVariant } from "../../components/Alert/types";
+import { TopActionBar } from "plugin/pages/EditorsPage/components/index";
+import { Alert } from "shared/Alert/Alert";
+import { AlertVariant } from "shared/Alert/types";
 
 interface AuthPageProps extends RequestProps {
     onLoginChange: (value: string) => void;
