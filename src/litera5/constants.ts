@@ -1,1 +1,1 @@
-export const LITERA5_MIN_TEXT_LENGTH = 32;
+export const L5_MIN_TEXT_LENGTH = 32;

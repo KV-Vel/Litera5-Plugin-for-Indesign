@@ -48,7 +48,7 @@ let timeout: ReturnType<typeof setTimeout>;
 /**
  * @description Ожидает окончания проверки текста и возвращает результат
  */
-async function waitForCheckToComplete(
+async function waitCheckResult(
     id: CheckOgxtResponse["check"],
     readProgress: (result: CheckOgxtResultsResponse) => void,
     api: Litera5Api,
@@ -66,10 +66,10 @@ async function waitForCheckToComplete(
                 return resolve(result);
             } else {
                 if (timeout) clearTimeout(timeout);
-                resolve(waitForCheckToComplete(id, readProgress, api));
+                resolve(waitCheckResult(id, readProgress, api));
             }
         }, 2500);
     });
 }
 
-export const litera5Request = { initLitera5Check, waitForCheckToComplete };
+export const l5Req = { initLitera5Check, waitCheckResult };
