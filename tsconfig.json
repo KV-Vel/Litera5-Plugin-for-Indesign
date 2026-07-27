@@ -12,7 +12,14 @@
         "isolatedModules": true,
         "jsx": "react-jsx",
         "noImplicitAny": true,
-        "types": ["@adobe/cc-ext-uxp-types", "@types/node"]
+        "types": ["@adobe/cc-ext-uxp-types", "@types/node"],
+        "baseUrl": ".",
+        "paths": {
+            "plugin/*": ["./src/plugin/*"],
+            "shared/*": ["./src/plugin/components/*"],
+            "indd/*": ["./src/indesign/*"],
+            "types/*": ["./src/types/*"]
+        }
     },
     "include": ["./src"]
 }

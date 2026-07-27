@@ -3,6 +3,7 @@ import { runAction, uxp } from "vite-uxp-plugin";
 import react from "@vitejs/plugin-react";
 
 import { config } from "./uxp.config";
+import path from "path";
 
 const action = process.env.BOLT_ACTION;
 const mode = process.env.MODE;
@@ -16,6 +17,14 @@ export default defineConfig({
             scss: {
                 additionalData: `@use "/src/variables.scss" as *;`,
             },
+        },
+    },
+    resolve: {
+        alias: {
+            plugin: path.resolve(__dirname, "./src/plugin"),
+            shared: path.resolve(__dirname, "./src/plugin/components"),
+            indd: path.resolve(__dirname, "./src/indesign"),
+            types: path.resolve(__dirname, "./src/types"),
         },
     },
     build: {
