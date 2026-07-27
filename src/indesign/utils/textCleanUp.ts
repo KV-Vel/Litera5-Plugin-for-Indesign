@@ -1,6 +1,6 @@
 import { ChangeGrepPreference, FindGrepPreference, TextFrame } from "indesign";
 import { app } from "../../globals";
-import { TextVariations } from "../../types/data";
+import { TextVariations } from "types/data";
 
 const GREP_SYMBOLS = {
     NONBREAKING_SPACE: "~S",

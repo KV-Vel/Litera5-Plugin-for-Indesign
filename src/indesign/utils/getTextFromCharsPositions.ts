@@ -1,5 +1,5 @@
 import { Position } from "litera5-api-js-client";
-import { TextVariations } from "../../types/data";
+import { TextVariations } from "types/data";
 import { getSelection } from "./getSelection";
 import { app } from "../../globals";
 
