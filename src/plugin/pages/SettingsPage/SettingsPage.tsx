@@ -1,12 +1,10 @@
 import { OrthoKind } from "litera5-api-js-client";
-import { Alert, StatisticBadge } from "../../components";
-import { AlertVariant } from "../../components/Alert/types";
+import { Alert, StatisticBadge, BackButton } from "shared/index";
+import { AlertVariant } from "shared/Alert/types";
 import "./SettingsPage.scss";
-import useLocalStorage from "../../hooks/useLocalStorage";
-import TopActionBar from "../EditorsPage/components/TopActionBar/TopActionBar";
-import { BackButton } from "../../components";
-import { DEFAULT_USER_SETTINGS, LOCAL_STORAGE_KEYS, SECURE_STORAGE_KEYS } from "../../constants";
-import useSecureStorage from "../../hooks/useSecureStorage";
+import { useLocalStorage, useSecureStorage } from "plugin/hooks/index";
+import { TopActionBar } from "plugin/pages/EditorsPage/components/index";
+import { DEFAULT_USER_SETTINGS, LOCAL_STORAGE_KEYS, SECURE_STORAGE_KEYS } from "plugin/constants";
 
 interface SettingsPageProps {
     onReturn: () => void;
