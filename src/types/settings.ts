@@ -1,5 +1,5 @@
-import { OrthoKind } from "litera5-api-js-client";
+import { CiceroKind, OrthoKind, QualityKind } from "litera5-api-js-client";
 
 export interface UserSettings {
-    exceptions: Record<OrthoKind, boolean>;
+    exceptions: Record<OrthoKind | CiceroKind | QualityKind | string, boolean>;
 }
