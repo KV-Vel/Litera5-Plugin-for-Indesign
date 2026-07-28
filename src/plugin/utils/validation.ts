@@ -1,7 +1,7 @@
 import { TextFrame } from "indesign";
-import { TextVariations } from "../../types/data";
-import { LITERA5_MIN_TEXT_LENGTH } from "../../litera5/constants";
-import { getSelection } from "../../indesign/utils";
+import { TextVariations } from "types/data";
+import { L5_MIN_TEXT_LENGTH } from "../../litera5/constants";
+import { getSelection } from "indd/utils";
 
 export function loginIsValid(login: string) {
     if (!login.trim().length) {
@@ -11,7 +11,7 @@ export function loginIsValid(login: string) {
     return true;
 }
 
-export function indesignSelectionIsValid(selection: ReturnType<typeof getSelection>) {
+export function inddSelectionIsValid(selection: ReturnType<typeof getSelection>) {
     if (!selection) {
         throw new Error("Не найден выделенный текст или фрейм.");
     }
@@ -34,7 +34,7 @@ export function indesignSelectionIsValid(selection: ReturnType<typeof getSelecti
     }
 
     const selectionReachMinTextLength =
-        (selection as TextVariations).texts.firstItem().length > LITERA5_MIN_TEXT_LENGTH;
+        (selection as TextVariations).texts.firstItem().length > L5_MIN_TEXT_LENGTH;
     if (!selectionReachMinTextLength) {
         throw new Error(
             "Объём проверяемого текста должен быть не меньше 32 и не больше 100.000 знаков.",
