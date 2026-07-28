@@ -1,128 +1,91 @@
-// HOOKS
 import { useCallback, useContext, useState, memo } from "react";
-
-// MODULES
-import AnnotationsList from "./components/Annotation/AnnotationsList";
-import Dropdown from "./components/Dropdown/Dropdown";
-import MultiSelect from "./components/MultiSelect/MultiSelect";
-import "./EditorsPage.scss";
-// TYPES
-import { RequestProps } from "../AuthPage/types";
-import { DispatchContext } from "../../context/DispatchContext";
-import { AnnotationStats, OrthoKind } from "litera5-api-js-client";
-import { CheckedDocumentData, ExtendedAnnotationStats, TypoData } from "../../../types/data";
-import { ClearAction, RemoveAction } from "../../reducers/typoDataReducer";
-import SettingsPage from "../SettingsPage/SettingsPage";
-import useAsyncIndesignKindsHighlight from "../../hooks/useAsyncIndesignKindsHighlight";
-import { useWithDocumentOpen } from "../../hooks/useWithDocumentOpen";
-import { ContextValueType, StatsContext } from "../../context/StatsContext";
-import { BottomActionBar } from "./components/BottomActionBar/BottomActionBar";
-import TopActionBar from "./components/TopActionBar/TopActionBar";
-import cog from "../../../assets/settings-svgrepo-com.svg";
-import { Alert } from "../../components";
-import { AlertVariant } from "../../components/Alert/types";
-import { resetCharacterStyles } from "../../../indesign/utils";
 import {
-    CheckedDocumentContext,
-    CheckedDocumentDataType,
-} from "../../context/CheckedDocumentContext";
+    BottomActionBar,
+    TopActionBar,
+    AnnotationsList,
+    Dropdown,
+    MultiSelect,
+} from "plugin/pages/EditorsPage/components/index";
+import "./EditorsPage.scss";
+import { RequestProps } from "../AuthPage/types";
+import { TextVariations, TypoData } from "types/data";
+import { AlertVariant } from "shared/Alert/types";
+import {
+    TyposDataContextProps,
+    TyposDataContext,
+    TyposStatsContext,
+    TyposStatsContextProps,
+    CheckedDocContext,
+    CheckedDocContextProps,
+} from "plugin/context/index";
+import { AnnotationStats, OrthoKind } from "litera5-api-js-client";
+import SettingsPage from "../SettingsPage/SettingsPage";
+import { useWithDocumentOpen, useInddKindsHighlight } from "plugin/hooks/index";
+import cog from "../../../assets/settings-svgrepo-com.svg";
+import { Alert } from "shared/index";
+import { resetCharacterStyles } from "indd/utils";
 
 const MemoizedList = memo(AnnotationsList);
 
 export default function EditorsPage(requestProps: RequestProps) {
     const [isSettingsPageActive, setIsSettingsPageActive] = useState(false);
-    const [setEveryIndesignKindsState, setIndesignKindState] = useAsyncIndesignKindsHighlight();
-    const dispatch = useContext(DispatchContext);
-    const [stats, setStats] = useContext(StatsContext) as ContextValueType;
-    const { tryWithDocumentOpen, inddError, clearError } = useWithDocumentOpen();
-    const { checkedDocumentData } = useContext(CheckedDocumentContext) as CheckedDocumentDataType;
+    const [setEveryInddKinds, setActiveInddKind] = useInddKindsHighlight();
+    const { setTypos } = useContext(TyposDataContext) as TyposDataContextProps;
+    const [typosStats, dispatch] = useContext(TyposStatsContext) as TyposStatsContextProps;
+    const { tryWithDocumentOpen, error, clearError } = useWithDocumentOpen();
+    const { checkedDocData } = useContext(CheckedDocContext) as CheckedDocContextProps;
 
-    const selectedKinds = stats.reduce((acc: Array<AnnotationStats["kind"]>, obj) => {
-        if (obj.selected) {
-            return [...acc, obj.kind];
-        }
-        return acc;
-    }, []);
+    const selectedKinds = typosStats.reduce(
+        (acc: Array<AnnotationStats["kind"]>, obj) => (obj.selected ? [...acc, obj.kind] : acc),
+        [],
+    );
 
     function handleCheckboxToggle(kindType: OrthoKind) {
-        const inddActionWasExecuted = tryWithDocumentOpen(checkedDocumentData.name, () => {
-            setIndesignKindState({ kind: kindType, txt: checkedDocumentData.text });
+        const inddActionIsExecuted = tryWithDocumentOpen(checkedDocData.name, () => {
+            setActiveInddKind({ name: kindType, txt: checkedDocData.text });
         });
-        if (!inddActionWasExecuted) return;
+        if (!inddActionIsExecuted) return;
 
-        setStats((prevStats) => {
-            return prevStats.map((stat) => {
-                if (stat.kind === kindType) {
-                    return {
-                        ...stat,
-                        selected: !stat.selected,
-                    };
-                }
-                return stat;
-            });
-        });
+        dispatch({ type: "TOGGLE_ONE_ANNOTATION", payload: { kindType } });
     }
 
     function onEveryCheckboxToggle(isEveryKindSelected: boolean) {
         const newToggleState = !isEveryKindSelected;
 
-        const inddActionWasExecuted = tryWithDocumentOpen(checkedDocumentData.name, () => {
-            // startTransition(() => {
-            setEveryIndesignKindsState({
-                active: newToggleState,
-                txt: checkedDocumentData.text,
+        const inddActionIsExecuted = tryWithDocumentOpen(checkedDocData.name, () => {
+            setEveryInddKinds({
+                isActive: newToggleState,
+                txt: checkedDocData.text,
             });
-            // });
         });
-        if (!inddActionWasExecuted) return;
+        if (!inddActionIsExecuted) return;
 
-        setStats((prevStats) => {
-            return prevStats.map((stat) => ({
-                ...stat,
-                selected: newToggleState,
-            }));
-        });
+        dispatch({ type: "TOGGLE_EVERY_ANNOTATION", payload: { newToggleState } });
     }
 
     const onRemoveAnnotation = useCallback(
-        (action: RemoveAction, selection: TypoData["selection"]) => {
-            const inddActionWasExecuted = tryWithDocumentOpen(checkedDocumentData.name, () => {
+        (id: number, kind: string, selection: TypoData["selection"]) => {
+            const inddActionIsExecuted = tryWithDocumentOpen(checkedDocData.name, () => {
                 selection[0].showText();
                 resetCharacterStyles(selection);
             });
-            if (!inddActionWasExecuted) return;
+            if (!inddActionIsExecuted) return;
 
-            setStats((prevStats) => {
-                return prevStats.reduce((acc: ExtendedAnnotationStats[], stat) => {
-                    if (stat.kind === action.payload.kind) {
-                        const updatedChilds = stat.typoIds.filter((id) => id !== action.payload.id);
-                        return !updatedChilds.length
-                            ? acc
-                            : [
-                                  ...acc,
-                                  { ...stat, count: updatedChilds.length, typoIds: updatedChilds },
-                              ];
-                    }
-                    return [...acc, stat];
-                }, []);
-            });
-            dispatch(action);
+            dispatch({ type: "DELETE_ONE", payload: { kind: kind, id: id } });
+            setTypos((prevTypos) => prevTypos.filter(({ typo }) => typo.id !== id));
         },
-        [checkedDocumentData.name, dispatch, setStats, tryWithDocumentOpen],
+        [checkedDocData.name, dispatch, setTypos, tryWithDocumentOpen],
     );
 
-    function handleRemoveAllAnnotations(
-        action: ClearAction,
-        selection: NonNullable<CheckedDocumentData["text"]>[],
-    ) {
-        const inddActionWasExecuted = tryWithDocumentOpen(checkedDocumentData.name, () => {
+    function handleRemoveAllAnnotations(...selection: TextVariations[]) {
+        const inddActionIsExecuted = tryWithDocumentOpen(checkedDocData.name, () => {
             selection[0].showText();
             resetCharacterStyles(selection);
         });
-        if (!inddActionWasExecuted) return;
+        if (!inddActionIsExecuted) return;
 
-        setStats([]);
-        dispatch(action);
+        dispatch({ type: "DELETE_ALL" });
+        setTypos([]);
     }
 
     return (
@@ -134,7 +97,7 @@ export default function EditorsPage(requestProps: RequestProps) {
                 <TopActionBar>
                     <Dropdown name="Типы примечаний">
                         <MultiSelect
-                            availableItems={stats}
+                            availableItems={typosStats}
                             toggleEveryItem={onEveryCheckboxToggle}
                             toggleItem={handleCheckboxToggle}
                         />
@@ -144,22 +107,21 @@ export default function EditorsPage(requestProps: RequestProps) {
                     </div>
                 </TopActionBar>
                 <MemoizedList
-                    key={checkedDocumentData.id}
+                    key={checkedDocData.id}
                     onRemoveAnnotation={onRemoveAnnotation}
                     selectedKinds={selectedKinds}
                 />
                 <BottomActionBar
                     {...requestProps}
-                    сlearAnnotations={() =>
-                        handleRemoveAllAnnotations({ type: "CLEAR_ANNOTATIONS" }, [
-                            checkedDocumentData.text!,
-                        ])
-                    }
+                    сlearAnnotations={() => {
+                        if (!checkedDocData.text) return;
+                        handleRemoveAllAnnotations(checkedDocData.text);
+                    }}
                 >
-                    {inddError && (
+                    {error && (
                         <Alert
                             header="Ошибка"
-                            description={inddError}
+                            description={error}
                             type={AlertVariant.WARNING}
                             onClose={clearError}
                         />
