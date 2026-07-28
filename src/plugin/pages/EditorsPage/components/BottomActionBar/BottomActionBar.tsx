@@ -1,10 +1,10 @@
-import { RequestProps } from "../../../AuthPage/types";
-import useTextCheck from "../../../../hooks/useTextCheck";
+import { RequestProps } from "plugin/pages/AuthPage/types";
+import { useTextCheck } from "plugin/hooks/index";
 import "./BottomActionBar.scss";
-import { getUserSettings, capitalize } from "../../../../utils";
-import { getSelection } from "../../../../../indesign/utils";
-import { Alert, Loader } from "../../../../components";
-import { AlertVariant } from "../../../../components/Alert/types";
+import { getUserSettings, capitalize } from "plugin/utils/index";
+import { getSelection } from "indd/utils/index";
+import { Alert, Loader } from "shared/index";
+import { AlertVariant } from "shared/Alert/types";
 
 interface BottomActionBarProps extends RequestProps {
     сlearAnnotations: () => void;
@@ -38,9 +38,6 @@ export function BottomActionBar({
                     onClose={clearError}
                 />
             )}
-            {/**
-             * children необходим для прокидывания других ошибок, т.к - это единственное место, где удобно их отобразить.
-             */}
             {children}
             <sp-button onClick={сlearAnnotations} variant="secondary">
                 Очистить подсказки

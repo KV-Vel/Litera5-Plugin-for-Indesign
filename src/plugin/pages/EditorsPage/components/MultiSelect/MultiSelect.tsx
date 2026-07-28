@@ -1,6 +1,6 @@
-import { StatisticBadge } from "../../../../components";
-import { ExtendedAnnotationStats } from "../../../../../types/data";
-import { capitalize } from "../../../../utils";
+import { StatisticBadge } from "shared/index";
+import { ExtendedAnnotationStats } from "types/data";
+import { capitalize } from "plugin/utils";
 import "./MultiSelect.scss";
 import { OrthoKind } from "litera5-api-js-client";
 
@@ -10,11 +10,7 @@ type MultiSelectProps = {
     toggleEveryItem: (isEveryKindSelected: boolean) => void;
 };
 
-export default function MultiSelect({
-    availableItems,
-    toggleItem,
-    toggleEveryItem,
-}: MultiSelectProps) {
+export function MultiSelect({ availableItems, toggleItem, toggleEveryItem }: MultiSelectProps) {
     const isEveryKindSelected = availableItems.every((item) => item.selected);
     const remainedTyposCount = availableItems.reduce((acc, item) => (acc += item.count), 0);
     const hasNoRemainedTypos = remainedTyposCount <= 0;

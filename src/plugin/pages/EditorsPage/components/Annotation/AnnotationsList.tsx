@@ -1,25 +1,25 @@
 import { useState, memo, useCallback, use, useContext, useDeferredValue } from "react";
 import { AnnotationContainer } from "./AnnotationContainer";
-import { ExtendedAnnotationStats, TextVariations, TypoData } from "../../../../../types/data";
+import { ExtendedAnnotationStats, TextVariations, TypoData } from "types/data";
 import "./AnnotationsList.scss";
-import { AlertVariant } from "../../../../components/Alert/types";
-import { Alert, StatisticBadge } from "../../../../components";
-import { RemoveAction } from "../../../../reducers/typoDataReducer";
+import { AlertVariant } from "shared/Alert/types";
+import { Alert, StatisticBadge } from "shared/index";
 import { OrthoKind } from "litera5-api-js-client";
-import { STYLES_NAMES } from "../../../../../indesign/constants";
-import { useWithDocumentOpen } from "../../../../hooks/useWithDocumentOpen";
-import { ContextValueType, StatsContext } from "../../../../context/StatsContext";
-import { app } from "../../../../../globals";
-import { TypoDataContext } from "../../../../context/TyposDataContext";
-import { capitalize } from "../../../../utils";
+import { STYLES_NAMES } from "indd/constants";
+import { useWithDocumentOpen } from "plugin/hooks/index";
 import {
-    CheckedDocumentContext,
-    CheckedDocumentDataType,
-} from "../../../../context/CheckedDocumentContext";
+    TyposStatsContext,
+    TyposStatsContextProps,
+    TyposDataContext,
+    TyposDataContextProps,
+} from "plugin/context/index";
+import { app } from "../../../../../globals";
+import { capitalize } from "plugin/utils";
+import { CheckedDocContext, CheckedDocContextProps } from "plugin/context/index";
 
 type AnnotationsListProps = {
     selectedKinds: ExtendedAnnotationStats["name"][];
-    onRemoveAnnotation: (action: RemoveAction, selection: TypoData["selection"]) => void;
+    onRemoveAnnotation: (id: number, kind: string, selection: TypoData["selection"]) => void;
 };
 
 type ActiveAnnotationProps = {
@@ -30,38 +30,35 @@ type ActiveAnnotationProps = {
 
 const MemoizedAnnotationContainer = memo(AnnotationContainer);
 
-export default function AnnotationsList({
-    selectedKinds,
-    onRemoveAnnotation,
-}: AnnotationsListProps) {
+export function AnnotationsList({ selectedKinds, onRemoveAnnotation }: AnnotationsListProps) {
     const [activeAnnotation, setActiveAnnotation] = useState<ActiveAnnotationProps>({
         id: null,
         texts: null,
         kind: null,
     });
     const { tryWithDocumentOpen } = useWithDocumentOpen();
-    const { checkedDocumentData } = useContext(CheckedDocumentContext) as CheckedDocumentDataType;
-    const typos = useContext(TypoDataContext);
-    const deferredKinds = useDeferredValue(selectedKinds);
+    const { checkedDocData } = useContext(CheckedDocContext) as CheckedDocContextProps;
+    const { typos } = useContext(TyposDataContext) as TyposDataContextProps;
 
+    const deferredKinds = useDeferredValue(selectedKinds);
     const typosToShow = typos.filter(({ typo }) => deferredKinds.includes(typo.kind));
 
     const annotationsAreEmpty = !typos.length;
     const kindsNotSelected = !selectedKinds.length && typos.length > 0;
 
     const handleRemoveAnnotation = useCallback(
-        (action: RemoveAction, selection: TypoData["selection"], isSelected: boolean) => {
+        (id: number, kind: string, selection: TypoData["selection"], isSelected: boolean) => {
             if (isSelected) {
                 setActiveAnnotation({ id: null, texts: null, kind: null });
             }
-            onRemoveAnnotation(action, selection);
+            onRemoveAnnotation(id, kind, selection);
         },
         [onRemoveAnnotation],
     );
 
     const onHighlight = useCallback(
         (id: number, texts: TextVariations[], kind: OrthoKind) => {
-            tryWithDocumentOpen(checkedDocumentData.name, () => {
+            tryWithDocumentOpen(checkedDocData.name, () => {
                 const charStyleGroup = app.activeDocument.characterStyleGroups.itemByName(
                     STYLES_NAMES.CHARACTER_STYLE_GROUP,
                 );
@@ -71,11 +68,11 @@ export default function AnnotationsList({
                 setActiveAnnotation((prevActive) => {
                     if (prevActive.texts) {
                         // Возвращаем предыдущему активному выделению его прежний стиль символов
-                        const prevOrthoKindStyle = charStyleGroup.characterStyles.itemByName(
+                        const prevHighlightStyle = charStyleGroup.characterStyles.itemByName(
                             prevActive.kind!,
                         );
                         prevActive.texts.forEach((txtObj) =>
-                            txtObj.applyCharacterStyle(prevOrthoKindStyle!),
+                            txtObj.applyCharacterStyle(prevHighlightStyle),
                         );
                     }
 
@@ -84,18 +81,18 @@ export default function AnnotationsList({
                     activeCharStyle.underlineColor = `fill (${kind})`;
                     activeCharStyle.strikeThroughColor = `border (${kind})`;
 
-                    texts.forEach((txtObj) => txtObj.applyCharacterStyle(activeCharStyle!));
+                    texts.forEach((txt) => txt.applyCharacterStyle(activeCharStyle));
                     texts[0].showText();
 
                     return { id, texts, kind };
                 });
             });
         },
-        [checkedDocumentData.name, tryWithDocumentOpen],
+        [checkedDocData.name, tryWithDocumentOpen],
     );
 
     if (kindsNotSelected) {
-        const [stats] = use(StatsContext) as ContextValueType;
+        const [typosStats] = use(TyposStatsContext) as TyposStatsContextProps;
 
         return (
             <div className="editors-page__alert-wrapper">
@@ -105,7 +102,7 @@ export default function AnnotationsList({
                     type={AlertVariant.QUESTION}
                 >
                     <ul className="available-kinds-list">
-                        {stats.map((stat) => (
+                        {typosStats.map((stat) => (
                             <li key={stat.kind} className="list-item">
                                 <span>{capitalize(stat.name)}</span>
                                 <StatisticBadge badgeStyle={stat.kind} remainedTypos={stat.count} />

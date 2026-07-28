@@ -5,7 +5,7 @@ interface DropdownProps extends React.PropsWithChildren {
     name: string;
 }
 
-export default function Dropdown({ name, children }: DropdownProps) {
+export function Dropdown({ name, children }: DropdownProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => setIsOpen(!isOpen);

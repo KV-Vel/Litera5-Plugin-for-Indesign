@@ -1,15 +1,19 @@
 import { memo, useRef } from "react";
 import "./AnnotationContainer.scss";
-import { TextVariations, TypoData } from "../../../../../types/data";
+import { TextVariations, TypoData } from "types/data";
 import { OrthoKind } from "litera5-api-js-client";
-import { RemoveAction } from "../../../../reducers/typoDataReducer";
-import { StatisticBadge } from "../../../../components";
+import { StatisticBadge } from "shared/index";
 
 type AnnotationContainerProps = {
     typoData: TypoData;
     isSelected: boolean;
     onHighlight: (id: number, texts: TextVariations[], kind: OrthoKind) => void;
-    onDelete: (action: RemoveAction, selection: TypoData["selection"], isSelected: boolean) => void;
+    onDelete: (
+        id: number,
+        kind: string,
+        selection: TypoData["selection"],
+        isSelected: boolean,
+    ) => void;
 };
 
 export const AnnotationContainer = memo(function AnnotationContainer({
@@ -62,10 +66,8 @@ export const AnnotationContainer = memo(function AnnotationContainer({
                     onClick={(event) => {
                         event.stopPropagation();
                         onDelete(
-                            {
-                                type: "REMOVE_ANNOTATION",
-                                payload: { id: typoData.typo.id, kind: typoData.typo.kind },
-                            },
+                            typoData.typo.id,
+                            typoData.typo.kind,
                             typoData.selection,
                             isSelected,
                         );
