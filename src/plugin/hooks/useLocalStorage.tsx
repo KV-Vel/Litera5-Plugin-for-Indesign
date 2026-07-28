@@ -11,10 +11,7 @@ function getStorageValue<T>(value: string, defaultValue: T) {
     return storageValue ? JSON.parse(storageValue) : defaultValue;
 }
 
-export default function useLocalStorage<T>(
-    storageName: string,
-    defaultValue: T,
-): useLocalStorageReturn<T> {
+export function useLocalStorage<T>(storageName: string, defaultValue: T): useLocalStorageReturn<T> {
     const [value, setValue] = useState(getStorageValue(storageName, defaultValue));
 
     useEffect(() => {

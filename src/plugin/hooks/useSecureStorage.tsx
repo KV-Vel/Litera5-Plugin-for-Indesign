@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { uxp } from "../../globals";
 import { getSecureStorageData } from "../utils/getSecureStorageData";
 
-export default function useSecureStorage(secureStorageName: string) {
+export function useSecureStorage(secureStorageName: string) {
     const [data, setData] = useState("");
 
     useEffect(() => {
