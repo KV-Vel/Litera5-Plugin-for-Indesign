@@ -1,20 +1,15 @@
-import { CheckOgxtResultsResponse, OrthoKind } from "litera5-api-js-client";
-import {
-    CheckedDocumentData,
-    ExtendedAnnotationStats,
-    TextVariations,
-    TypoData,
-} from "../../types/data";
-import { initIndesignSettings } from "../../indesign/settings/settings";
+import { CheckOgxtResultsResponse } from "litera5-api-js-client";
+import { CheckedDocData, ExtendedAnnotationStats, TextVariations, TypoData } from "types/data";
+import { initInddSettings } from "indd/settings/settings";
 import { app } from "../../globals";
 import { TextFrame } from "indesign";
-import { getTextFromCharsPositions } from "../../indesign/utils";
-import { UserSettings } from "../../types/settings";
+import { getTextFromCharsPositions } from "indd/utils";
+import { UserSettings } from "types/settings";
 
 type AppData = {
     typos: TypoData[];
-    stats: ExtendedAnnotationStats[];
-    checkedDocData: CheckedDocumentData;
+    typosStats: ExtendedAnnotationStats[];
+    checkedDocData: CheckedDocData;
 };
 
 export function createAppDataFromResponse(
@@ -27,61 +22,59 @@ export function createAppDataFromResponse(
         throw new Error("Не удалось отметить ошибки, т.к проверяемый документ был закрыт.");
     }
 
-    const textHasNoTypos = !annotations?.annotations || !stats?.annotations;
     const textToCheck = selection.texts.firstItem();
+    const appData = {
+        typos: [],
+        typosStats: [],
+        checkedDocData: {
+            name: app.activeDocument.name,
+            text: textToCheck,
+            id: crypto.randomUUID(),
+        },
+    };
+
+    const textHasNoTypos = !annotations?.annotations || !stats?.annotations;
     if (textHasNoTypos) {
-        return {
-            typos: [],
-            stats: [],
-            checkedDocData: {
-                name: app.activeDocument.name,
-                text: textToCheck,
-                id: crypto.randomUUID(),
-            },
-        };
+        return appData;
     }
 
-    const characterStyleGroup = initIndesignSettings();
+    const characterStyleGroup = initInddSettings();
     const annotationTypeChilds = new Map();
     const userFilteredAnnotations = annotations.annotations.filter(
-        (item) => settings.exceptions[item.kind as OrthoKind] === true,
+        ({ kind }) => settings.exceptions[kind] === true,
     );
 
     const typosData = userFilteredAnnotations.map((typo) => {
-        const textWithTypo = typo.position.map(({ start, end }) => {
+        const { position, kind, id } = typo;
+
+        const textWithTypo = position.map(({ start, end }) => {
             const selectedTypoInText = getTextFromCharsPositions(start, end, textToCheck);
             // Возможно, лучше действительно сразу взять все characterStyles чем для условных 20 ошибок каждый раз брать новый стиль
-            const charactersHighlightStyle = characterStyleGroup.characterStyles.itemByName(
-                typo.kind,
-            );
+            const charactersHighlightStyle = characterStyleGroup.characterStyles.itemByName(kind);
             selectedTypoInText.applyCharacterStyle(charactersHighlightStyle);
 
             return selectedTypoInText;
         });
 
-        if (!annotationTypeChilds.has(typo.kind)) {
-            annotationTypeChilds.set(typo.kind, [typo.id]);
+        if (!annotationTypeChilds.has(kind)) {
+            annotationTypeChilds.set(kind, [id]);
         } else {
-            const kindStat = annotationTypeChilds.get(typo.kind);
-            kindStat.push(typo.id);
+            const kindStat = annotationTypeChilds.get(kind);
+            kindStat.push(id);
         }
 
         return { typo, selection: textWithTypo };
     });
     return {
         typos: typosData,
-        stats: stats.annotations
-            .filter((item) => settings.exceptions[item.kind as OrthoKind] === true)
+        typosStats: stats.annotations
+            .filter(({ kind }) => settings.exceptions[kind] === true)
             .map((annotationStat) => ({
                 ...annotationStat,
                 name: annotationStat.name === "ё" ? "Буква Ё" : annotationStat.name,
                 selected: true,
                 typoIds: annotationTypeChilds.get(annotationStat.kind),
             })),
-        checkedDocData: {
-            name: app.activeDocument.name,
-            text: textToCheck,
-            id: crypto.randomUUID(),
-        },
+        checkedDocData: { ...appData.checkedDocData },
     };
 }
