@@ -1,47 +1,53 @@
 import { useContext, useState } from "react";
 import { CheckOgxtResultsResponse, CheckState, createApi } from "litera5-api-js-client";
-import { TextVariations } from "../../types/data";
-import { litera5Request } from "../../litera5/litera5Request";
-import { indesignSelectionIsValid, loginIsValid } from "../utils/validation";
-import { DispatchContext } from "../context/DispatchContext";
+import { TextVariations } from "types/data";
+import { UserSettings } from "types/settings";
+import { l5Req } from "../../litera5/litera5Request";
 import { TextFrame } from "indesign";
-import { CheckedDocumentContext, CheckedDocumentDataType } from "../context/CheckedDocumentContext";
-import { ContextValueType, StatsContext } from "../context/StatsContext";
-import { UserSettings } from "../../types/settings";
-import { getSelection, textCleanUp } from "../../indesign/utils";
-import { createAppDataFromResponse } from "../utils";
-import { getSecureStorageData } from "../utils/getSecureStorageData";
+import {
+    CheckedDocContext,
+    CheckedDocContextProps,
+    TyposStatsContextProps,
+    TyposStatsContext,
+    TyposDataContextProps,
+    TyposDataContext,
+} from "../context/index";
+import { getSelection, textCleanUp } from "indd/utils/index";
+import {
+    createAppDataFromResponse,
+    getSecureStorageData,
+    loginIsValid,
+    inddSelectionIsValid,
+} from "plugin/utils/index";
 import { SECURE_STORAGE_KEYS } from "../constants";
 
 const initialProgressState = { progress: 0, message: "Запуск проверки" };
 
-export default function useTextCheck() {
+export function useTextCheck() {
     const [isLoading, setIsLoading] = useState(false);
-    const [progressState, setProgressState] = useState(initialProgressState);
-    const { setCheckedDocumentData } = useContext(
-        CheckedDocumentContext,
-    ) as CheckedDocumentDataType;
-    const dispatch = useContext(DispatchContext);
+    const [progress, setProgress] = useState(initialProgressState);
+    const { setCheckedDocData } = useContext(CheckedDocContext) as CheckedDocContextProps;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_, setStats] = useContext(StatsContext) as ContextValueType;
-
+    const [_, setStats] = useContext(TyposStatsContext) as TyposStatsContextProps;
+    const { setTypos } = useContext(TyposDataContext) as TyposDataContextProps;
     const [requestError, setRequestError] = useState("");
 
-    function readProgress(response: CheckOgxtResultsResponse) {
-        if (response.state === CheckState.CHECKED_SUCCESS) {
-            /**
-             * Могу ошибаться, но результат проверки никогда (или почти никогда) не возвращает 100%, хотя статус CHECKED_SUCCESS при этом будет.
-             * Поэтому вручную показываем пользователю, что проверка достигла 100%
-             */
-            setProgressState({ progress: 100, message: "Отмечаем ошибки в тексте" });
-        } else {
-            setProgressState({ progress: response.progress, message: response.message });
-        }
+    function updateProgress(response: CheckOgxtResultsResponse) {
+        /**
+         * Могу ошибаться, но результат проверки никогда (или почти никогда) не возвращает 100%, хотя статус CHECKED_SUCCESS при этом будет.
+         * Поэтому вручную показываем пользователю, что проверка достигла 100%
+         */
+        const progressData =
+            response.state === CheckState.CHECKED_SUCCESS
+                ? { progress: 100, message: "Отмечаем ошибки в тексте" }
+                : { progress: response.progress, message: response.message };
+
+        setProgress(progressData);
     }
 
     function runValidation(login: string, selection: ReturnType<typeof getSelection>) {
         loginIsValid(login);
-        indesignSelectionIsValid(selection);
+        inddSelectionIsValid(selection);
     }
 
     async function handleTextCheck(
@@ -67,44 +73,29 @@ export default function useTextCheck() {
                 company: (await getSecureStorageData(SECURE_STORAGE_KEYS.COMPANY)).trim(),
                 secret: (await getSecureStorageData(SECURE_STORAGE_KEYS.SECRET)).trim(),
             };
-            const apiLitera5 = createApi(config);
-            const documentCheckId = await litera5Request.initLitera5Check(
-                login,
-                plainText,
-                apiLitera5,
-            );
-            if (documentCheckId) {
-                const litera5Response: CheckOgxtResultsResponse =
-                    await litera5Request.waitForCheckToComplete(
-                        documentCheckId,
-                        readProgress,
-                        apiLitera5,
-                    );
+            const apiL5 = createApi(config);
+            const docCheckId = await l5Req.initLitera5Check(login, plainText, apiL5);
+            if (docCheckId) {
+                const res = await l5Req.waitCheckResult(docCheckId, updateProgress, apiL5);
 
-                const { typos, stats, checkedDocData } = createAppDataFromResponse(
-                    litera5Response,
+                const { typos, typosStats, checkedDocData } = createAppDataFromResponse(
+                    res,
                     selectionObject,
                     settings,
                 );
-                setStats(stats);
-                dispatch({ type: "SET_DATA", payload: { data: typos } });
-                setCheckedDocumentData(checkedDocData);
-                return litera5Response;
+                setStats({ type: "SET_ANNOTATIONS", payload: { data: typosStats } });
+                setTypos(typos);
+                setCheckedDocData(checkedDocData);
+                return res;
             }
         } catch (error) {
             console.error(error);
             setRequestError(error instanceof Error ? error.message : "Что-то пошло не так...");
         } finally {
-            setProgressState(initialProgressState);
+            setProgress(initialProgressState);
             setIsLoading(false);
         }
     }
 
-    return [
-        isLoading,
-        progressState,
-        requestError,
-        () => setRequestError(""),
-        handleTextCheck,
-    ] as const;
+    return [isLoading, progress, requestError, () => setRequestError(""), handleTextCheck] as const;
 }
