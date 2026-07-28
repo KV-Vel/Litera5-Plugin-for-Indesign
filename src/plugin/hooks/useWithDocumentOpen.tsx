@@ -1,30 +1,30 @@
 import { useCallback, useContext } from "react";
-// import { CheckedDocumentContext, CheckedDocumentDataType } from "../context/CheckedDocumentContext";
 import { app } from "../../globals";
-import { hasDuplicateDocuments, makeDocumentActive } from "../../indesign/utils";
-import { Document } from "indesign";
-import { InddErrorContext, InddErrorContextProps } from "../context/IndesignErrorsContext";
+import { hasDuplicateDocuments, makeDocumentActive } from "indd/utils";
+import { ErrorContext, ErrorContextProps } from "../context/index";
 
 export function useWithDocumentOpen() {
-    const [inddError, setInddError] = useContext(InddErrorContext) as InddErrorContextProps;
+    const [error, setError] = useContext(ErrorContext) as ErrorContextProps;
 
-    const clearError = () => setInddError(null);
+    const clearError = () => setError(null);
 
     /**
      * @description Выполняет действие, если возможно открыть документ.
      * @returns Возвращает булево значение, указывающее был ли выполнен callback в документе
      */
     const tryWithDocumentOpen = useCallback(
-        (documentName: Document["name"], callback: () => void) => {
+        (docName: string, callback: () => void) => {
             try {
-                const checkingDocument = app.documents.itemByName(documentName);
+                app.scriptPreferences.enableRedraw = false;
 
-                const isCheckingDocumentActive = makeDocumentActive(checkingDocument);
-                if (!isCheckingDocumentActive) {
+                const checkingDoc = app.documents.itemByName(docName);
+
+                const isCheckingDocActive = makeDocumentActive(checkingDoc);
+                if (!isCheckingDocActive) {
                     throw new Error("Проверяемый документ более недоступен.");
                 }
 
-                if (hasDuplicateDocuments(documentName)) {
+                if (hasDuplicateDocuments(docName)) {
                     throw new Error(
                         "Обнаружено несколько документов с одинаковым именем. Закройте тот документ, который не проверяется в настоящий момент.",
                     );
@@ -35,16 +35,16 @@ export function useWithDocumentOpen() {
                 return true;
             } catch (err) {
                 if (err instanceof Error) {
-                    setInddError(err.message);
+                    setError(err.message);
                 } else {
-                    setInddError("Неизвестная ошибка во время выполнения действия в Indesign.");
+                    setError("Неизвестная ошибка во время выполнения действия в Indesign.");
                 }
 
                 return false;
             }
         },
-        [setInddError],
+        [setError],
     );
 
-    return { tryWithDocumentOpen, inddError, clearError } as const;
+    return { tryWithDocumentOpen, error, clearError } as const;
 }
